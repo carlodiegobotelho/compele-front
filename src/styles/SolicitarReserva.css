@@ -1,0 +1,176 @@
+.page-wrapper {
+  width: 100%;
+  padding: 40px 60px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .page-wrapper {
+    padding: 20px;
+  }
+}
+
+/* ---------- HEADER ---------- */
+.page-header {
+  margin-bottom: 30px;
+}
+
+.page-header h1 {
+  font-size: 1.8rem;
+  color: #171c2e;
+  margin: 0;
+}
+
+.header-line {
+  width: 60px;
+  height: 4px;
+  background-color: #2563eb;
+  border-radius: 3px;
+  margin-top: 6px;
+}
+
+/* ---------- FORM ---------- */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px 40px;
+  width: 65%;
+}
+
+.full-width {
+  grid-column: span 2;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 15px;
+  resize: none;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+/* ---------- BOTÃO ---------- */
+.form-actions {
+  grid-column: span 2;
+  text-align: right;
+}
+
+.form-actions button {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 30px;
+  font-weight: bold;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.form-actions button:hover {
+  background-color: #1e4ed8;
+}
+
+
+
+
+
+
+/* ===== MODAL ===== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 30px 40px;
+  border-radius: 12px;
+  width: 400px;
+  text-align: center;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-content h3 {
+  margin: 0 0 10px;
+  color: #171c2e;
+}
+
+.modal-content p {
+  color: #444;
+  margin-bottom: 20px;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.btn-cancel,
+.btn-confirm {
+  flex: 1;
+  padding: 12px 0;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-cancel {
+  background-color: #e5e7eb;
+  color: #111;
+}
+
+.btn-confirm {
+  background-color: #2563eb;
+  color: #fff;
+}
+
+.btn-confirm:hover {
+  background-color: #1e4ed8;
+}
+
+/* Barra de tempo */
+.timer-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  background-color: #93c5fd;
+  transition: width 1s linear;
+}
+
+/* Animação */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}

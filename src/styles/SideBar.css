@@ -1,0 +1,119 @@
+.sidebar {
+  width: 300px;
+  background-color: #171c2e;
+  color: #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: width 0.3s ease;
+  height: 100vh;
+  font-weight: bold;
+}
+
+.sidebar.collapsed {
+  width: 80px;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border-bottom: 1px solid #2b2f45;
+}
+
+.user-section {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 12px;
+}
+
+.user-icon {
+  font-size: 2.2rem;
+  color: #cfcfcf;
+  flex-shrink: 0;
+}
+
+.user-texts {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.user-name {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+.user-email {
+  font-size: 0.85rem;
+  color: #b0b0b0;
+}
+
+.toggle-btn {
+  background: none;
+  border: none;
+  color: #e0e0e0;
+  cursor: pointer;
+  font-size: 1.2rem;
+  margin-left: auto;
+}
+
+.toggle-btn-closed {
+  align-self: center;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+}
+
+.menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex-grow: 1;
+}
+
+.menu li {
+  display: flex;
+  align-items: center;
+  padding: 14px 20px;
+  cursor: pointer;
+  transition: background 0.2s;
+  gap: 14px;
+}
+
+.menu li:hover {
+  background-color: #22263d;
+}
+
+.menu li.active {
+  background-color: #2e3450;
+}
+
+.logout-section {
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  border-top: 1px solid #2b2f45;
+}
+
+.logout-section:hover {
+  background-color: #22263d;
+}
+
+/* ✅ Esconde apenas os textos quando colapsado */
+.sidebar.collapsed .menu li span,
+.sidebar.collapsed .logout-section span,
+.sidebar.collapsed .user-texts {
+  display: none;
+}
+
+/* (Opcional) Centraliza os ícones quando colapsado */
+.sidebar.collapsed .menu li {
+  justify-content: center;
+}
