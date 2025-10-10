@@ -1,0 +1,29 @@
+.page-header {
+  margin-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+}
+
+.page-header h1 {
+  font-size: 1.8rem;
+  color: #171c2e;
+  margin: 0;
+}
+
+.header-line {
+  width: 60px;
+  height: 4px;
+  background-color: #2563eb;
+  border-radius: 3px;
+  margin: 8px 0 20px 0;
+}
+
+/* Área opcional para filtros ou controles */
+.page-header-content {
+  background: #ffffff;
+  padding: 15px 25px;
+  border-radius: 10px;
+  box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  box-sizing: border-box;
+}

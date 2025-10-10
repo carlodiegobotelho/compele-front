@@ -4,15 +4,17 @@ import { FaInfoCircle, FaSearch, FaEye } from "react-icons/fa";
 import "../styles/MinhasSolicitacoes.css";
 
 export default function MinhasSolicitacoes() {
-  const dataFiltro = new Date();
-  dataFiltro.setDate(dataFiltro.getDate() - 10);
-  
-  const dataInicio = dataFiltro.toISOString().split("T")[0];
-  const dataFim = new Date().toISOString().split("T")[0];
+  const dataInicio = new Date();
+  dataInicio.setDate(dataInicio.getDate() - 10);
+  const dataFim = new Date();
+  dataFim.setDate(dataFim.getDate() + 5);
+
+  const dataInicioFormatada = dataInicio.toISOString().split("T")[0];
+  const dataFimFormatada = dataFim.toISOString().split("T")[0];
 
   const [filtro, setFiltro] = useState({
-    dataCriacaoInicio: dataInicio,
-    dataCriacaoFim: dataFim,
+    dataCriacaoInicio: dataInicioFormatada,
+    dataCriacaoFim: dataFimFormatada,
     status: "0",
   });
 
@@ -98,44 +100,43 @@ export default function MinhasSolicitacoes() {
         <div className="header-line"></div>
 
         <form className="filtro-header" onSubmit={handleBuscar}>
-        <div className="filtro-inline">
-            <div className="filtro-group">
-            <label>Data Início</label>
-            <input
-                type="date"
-                name="dataCriacaoInicio"
-                value={filtro.dataCriacaoInicio}
-                onChange={handleChange}
-            />
-            </div>
+            <div className="filtro-inline">
+                <div className="filtro-group">
+                <label>Data Início</label>
+                <input
+                    type="date"
+                    name="dataCriacaoInicio"
+                    value={filtro.dataCriacaoInicio}
+                    onChange={handleChange}
+                />
+                </div>
 
-            <div className="filtro-group">
-            <label>Data Fim</label>
-            <input
-                type="date"
-                name="dataCriacaoFim"
-                value={filtro.dataCriacaoFim}
-                onChange={handleChange}
-            />
-            </div>
+                <div className="filtro-group">
+                <label>Data Fim</label>
+                <input
+                    type="date"
+                    name="dataCriacaoFim"
+                    value={filtro.dataCriacaoFim}
+                    onChange={handleChange}
+                />
+                </div>
 
-            <div className="filtro-group">
-            <label>Status</label>
-            <select name="status" value={filtro.status} onChange={handleChange}>
-                <option value="0">Todos</option>
-                <option value="1">Pendente</option>
-                <option value="2">Aprovado</option>
-                <option value="3">Reprovado</option>
-                <option value="4">Cancelado</option>
-            </select>
-            </div>
+                <div className="filtro-group">
+                <label>Status</label>
+                <select name="status" value={filtro.status} onChange={handleChange}>
+                    <option value="0">Todos</option>
+                    <option value="1">Pendente</option>
+                    <option value="2">Aprovado</option>
+                    <option value="3">Reprovado</option>
+                    <option value="4">Cancelado</option>
+                </select>
+                </div>
 
-            <button type="submit" className="btn-buscar">
-            <FaSearch /> Buscar
-            </button>
-        </div>
+                <button type="submit" className="btn-buscar">
+                <FaSearch /> Buscar
+                </button>
+            </div>
         </form>
-        
       </div>
 
       <div className="table-wrapper">

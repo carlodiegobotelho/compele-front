@@ -1,221 +1,300 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { toast, ToastContainer } from "react-toastify";
+import { FaCheckCircle } from "react-icons/fa";
 import "react-toastify/dist/ReactToastify.css";
+import PageHeader from "../components/PageHeader";
 import "../styles/SolicitarReserva.css";
-import { salvarReserva, obterSolicitacoes } from '../services/reservaService'
+import cidades from "../data/cidades";
 
 export default function SolicitarReserva() {
   const hoje = new Date().toISOString().split("T")[0];
+
   const [form, setForm] = useState({
     dataInicio: hoje,
-    dataFim: "",
+    dataFim: hoje,
     cidade: "",
-    motivo: "",
+    nomeAnfitriao: "",
+    telefoneAnfitriao: "",
+    linkImovel: "",
+    valorImovel: "",
+    valorReal: "",
+    valorComTaxa: "",
     tipoReserva: "1",
     quantidadePessoas: 1,
+    motivo: "",
   });
-  const [showModal, setShowModal] = useState(false);
-  const [timer, setTimer] = useState(10);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
   };
 
+  const handleMoneyChange = (e) => {
+    const { name, value } = e.target;
+    const num = value.replace(/\D/g, "");
+    const formatted = (Number(num) / 100).toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    });
+    setForm({ ...form, [name]: formatted });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const toDecimal = (v) =>
+      Number(v.replace(/[R$\s.]/g, "").replace(",", ".")) || 0;
+
+    const payload = {
+      dataInicio: form.dataInicio,
+      dataFim: form.dataFim,
+      cidade: form.cidade,
+      nomeAnfitriao: form.nomeAnfitriao,
+      telefoneAnfitriao: form.telefoneAnfitriao,
+      linkImovel: form.linkImovel,
+      valorImovel: toDecimal(form.valorImovel),
+      valorReal: toDecimal(form.valorReal),
+      valorComTaxa: toDecimal(form.valorComTaxa),
+      tipoReserva: Number(form.tipoReserva),
+      quantidadePessoas: Number(form.quantidadePessoas),
+      motivo: form.motivo,
+    };
+
     try {
-      await salvarReserva({
-        dataInicio: form.dataInicio,
-        dataFim: form.dataFim,
-        cidade: form.cidade,
-        motivo: form.motivo,
-        tipoReserva: parseInt(form.tipoReserva),
-        quantidadePessoas: parseInt(form.quantidadePessoas),
-      });
+      await api.post("/api/reservas", payload);
 
-        toast.success("Reserva solicitada com sucesso!");
-
-        setShowModal(true);
+      setShowModal(true);
+      setTimer(10);
 
       setForm({
         dataInicio: hoje,
         dataFim: "",
         cidade: "",
-        motivo: "",
+        nomeAnfitriao: "",
+        telefoneAnfitriao: "",
+        linkImovel: "",
+        valorImovel: "",
+        valorReal: "",
+        valorComTaxa: "",
         tipoReserva: "1",
         quantidadePessoas: 1,
+        motivo: "",
       });
-      var a1 = await obterSolicitacoes();
-      console.log(a1)
-    } catch (error) {
-      console.error(error);
-      toast.error(
-        error.response?.data?.erros?.[0] || "Erro ao solicitar reserva"
-      );
+    } catch (err) {
+      toast.error("Erro ao enviar solicitação. Verifique os campos.");
     }
   };
 
-  const cidades = [
-    "Belém", "Belo Horizonte", "Blumenau", "Boa Vista", "Brasília", "Campinas", "Campo Grande",
-    "Cascavel", "Curitiba", "Feira de Santana", "Florianópolis", "Fortaleza", "Goiânia",
-    "Guarulhos", "Joinville", "Londrina", "Macapá", "Maceió", "Manaus", "Maringá", "Natal",
-    "Niterói", "Osasco", "Palmas", "Porto Alegre", "Recife", "Ribeirão Preto", "Rio de Janeiro",
-    "Salvador", "Santos", "São Bernardo do Campo", "São Gonçalo", "São José dos Campos",
-    "São Luís", "São Paulo", "Sorocaba", "Teresina", "Uberlândia", "Vitória", "Volta Redonda",
-  ].sort();
+  const cidadesOptions = React.useMemo(() => {
+    const unique = Array.from(new Set(cidades));
+    return unique.sort(new Intl.Collator("pt-BR").compare);
+  }, [cidades]);
+
+  const [showModal, setShowModal] = useState(false);
+  const [timer, setTimer] = useState(10);
+  const navigate = useNavigate();
 
   useEffect(() => {
-        let countdown;
-        if (showModal && timer > 0) {
-            countdown = setInterval(() => setTimer((t) => t - 1), 1000);
-        } else if (showModal && timer === 0) {
-            handleConfirm(); // executa automaticamente o SIM
-        }
-        return () => clearInterval(countdown);
-    }, [showModal, timer]);
-
-    const handleConfirm = () => {
-        setShowModal(false);
-        window.location.href = "/principal"; // navega pra principal
-    };
-
-    const handleCancel = () => {
-        setShowModal(false);
-        setForm({
-            dataInicio: hoje,
-            dataFim: "",
-            cidade: "",
-            motivo: "",
-            tipoReserva: "1",
-            quantidadePessoas: 1,
-        });
-        setTimer(10);
-    };
-
+    let countdown;
+    if (showModal && timer > 0) {
+      countdown = setInterval(() => setTimer((t) => t - 1), 1000);
+    } else if (showModal && timer === 0) {
+      navigate("/minhas-solicitacoes");
+    }
+    return () => clearInterval(countdown);
+  }, [showModal, timer]);
 
   return (
     <div className="page-wrapper">
-      <div className="page-header">
-        <h1>Solicitar Reserva</h1>
-        <div className="header-line" />
-      </div>
+      <PageHeader title="Solicitar Reserva" />
 
-      <form className="form-grid" onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Data Início</label>
-          <input
-            type="date"
-            name="dataInicio"
-            value={form.dataInicio}
-            min={hoje}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Data Fim</label>
-          <input
-            type="date"
-            name="dataFim"
-            value={form.dataFim}
-            min={form.dataInicio || hoje}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div className="form-group full-width">
-        </div>
-
-        <div className="form-group full-width">
-          <label>Cidade</label>
-          <input
-            list="listaCidades"
-            name="cidade"
-            value={form.cidade}
-            onChange={handleChange}
-            placeholder="Selecione ou digite uma cidade"
-            required
-          />
-          <datalist id="listaCidades">
-            {cidades.map((c) => (
-              <option key={c} value={c} />
-            ))}
-          </datalist>
-        </div>
-
-        <div className="form-group full-width">
-        </div>
-        <div className="form-group">
-        </div>
-
-        <div className="form-group">
-          <label>Tipo de Reserva</label>
-          <select
-            name="tipoReserva"
-            value={form.tipoReserva}
-            onChange={handleChange}
-            required
-          >
-            <option value="1">Nova</option>
-            <option value="2">Renovação</option>
-          </select>
-        </div>
-
-        <div className="form-group">
-          <label>Quantidade de Pessoas</label>
-          <input
-            type="number"
-            name="quantidadePessoas"
-            min="1"
-            value={form.quantidadePessoas}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group full-width">
-        </div>
-        <div className="form-group full-width">
-            <label>Motivo</label>
-            <textarea
-                name="motivo"
-                rows="3"
-                value={form.motivo}
-                onChange={handleChange}
-                required
+      <form className="form-reserva" onSubmit={handleSubmit}>
+        {/* Linha 1 */}
+        <div className="form-row">
+          <div className="form-group">
+            <label>Data Início</label>
+            <input
+              type="date"
+              name="dataInicio"
+              value={form.dataInicio}
+              onChange={handleChange}
+              min={hoje}
+              required
             />
+          </div>
+
+          <div className="form-group">
+            <label>Data Fim</label>
+            <input
+              type="date"
+              name="dataFim"
+              value={form.dataFim}
+              onChange={handleChange}
+              min={form.dataInicio}
+              required
+            />
+          </div>
         </div>
-        <div className="form-group full-width">
+
+        {/* Linha 2 */}
+        <div className="form-row">
+          <div className="form-group">
+            <label>Cidade</label>
+            <input
+              type="text"
+              name="cidade"
+              value={form.cidade}
+              onChange={handleChange}
+              list="listaCidadesBR"
+              placeholder="Digite ou selecione"
+              autoComplete="on"
+              required
+            />
+            <datalist id="listaCidadesBR">
+              {cidadesOptions.map((c) => (
+                <option key={c} value={c} />
+              ))}
+            </datalist>
+          </div>
+
+          <div className="form-group">
+            <label>Quantidade de Pessoas</label>
+            <input
+              type="number"
+              name="quantidadePessoas"
+              value={form.quantidadePessoas}
+              onChange={handleChange}
+              min="1"
+              required
+            />
+          </div>
         </div>
+
+        {/* Linha 3 */}
+        <div className="form-row">
+          <div className="form-group">
+            <label>Nome do Anfitrião</label>
+            <input
+              type="text"
+              name="nomeAnfitriao"
+              value={form.nomeAnfitriao}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Telefone do Anfitrião</label>
+            <input
+              type="tel"
+              name="telefoneAnfitriao"
+              value={form.telefoneAnfitriao}
+              onChange={handleChange}
+              placeholder="(99) 99999-9999"
+              required
+            />
+          </div>
+
+
+        </div>
+
+        {/* Linha 4 */}
+        <div className="form-row">
+          <div className="form-group">
+            <label>Valor do Imóvel</label>
+            <input
+              type="text"
+              name="valorImovel"
+              value={form.valorImovel}
+              onChange={handleMoneyChange}
+              placeholder="R$ 0,00"
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Valor Real</label>
+            <input
+              type="text"
+              name="valorReal"
+              value={form.valorReal}
+              onChange={handleMoneyChange}
+              placeholder="R$ 0,00"
+            />
+          </div>
+        </div>
+
+        {/* Linha 5 */}
+        <div className="form-row">
+          <div className="form-group">
+            <label>Valor com Taxa</label>
+            <input
+              type="text"
+              name="valorComTaxa"
+              value={form.valorComTaxa}
+              onChange={handleMoneyChange}
+              placeholder="R$ 0,00"
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Tipo de Reserva</label>
+            <select
+              name="tipoReserva"
+              value={form.tipoReserva}
+              onChange={handleChange}
+            >
+              <option value="1">Nova</option>
+              <option value="2">Renovação</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Linha 6 */}
+        <div className="form-row">
+          <div className="form-group">
+            <label>Link do Imóvel</label>
+            <input
+              type="url"
+              name="linkImovel"
+              value={form.linkImovel}
+              onChange={handleChange}
+              placeholder="https://..."
+            />
+          </div>
+        </div>
+
+        {/* Linha 7 */}
         <div className="form-group">
+          <label>Motivo</label>
+          <textarea
+            name="motivo"
+            value={form.motivo}
+            onChange={handleChange}
+            rows="4"
+            required
+          ></textarea>
         </div>
-        <div className="form-actions">
-          <button type="submit">Enviar Solicitação</button>
-        </div>
+
+        <button type="submit" className="btn-enviar">
+          Enviar Solicitação
+        </button>
       </form>
-      <ToastContainer position="top-right" />
+
       {showModal && (
         <div className="modal-overlay">
-            <div className="modal-content">
-            <h3>Solicitação de reserva efetuada!</h3>
-            <p>Deseja retornar para a tela principal?</p>
-
-            <div className="modal-buttons">
-                <button className="btn-cancel" onClick={handleCancel}>Não</button>
-                <button className="btn-confirm" onClick={handleConfirm}>
-                Sim
-                <div
-                    className="timer-bar"
-                    style={{ width: `${(10 - timer) * 10}%` }}
-                ></div>
-                </button>
-            </div>
-            </div>
+          <div className="modal-content">
+            <FaCheckCircle className="success-icon" />
+            <h3>Reserva solicitada com sucesso!</h3>
+            <button className="btn-ver-solicitacoes" onClick={() => navigate("/minhas-solicitacoes")}>
+              Ver minhas solicitações ({timer})
+              <div className="timer-bar" style={{ width: `${(10 - timer) * 10}%` }}></div>
+            </button>
+          </div>
         </div>
-        )}
+      )}
+      <ToastContainer position="top-right" />
     </div>
   );
 }

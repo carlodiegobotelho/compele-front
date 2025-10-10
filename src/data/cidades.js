@@ -1,0 +1,33 @@
+const cidades = [
+  "São Paulo", "Rio de Janeiro", "Brasília", "Salvador", "Fortaleza",
+  "Belo Horizonte", "Manaus", "Curitiba", "Recife", "Porto Alegre",
+  "Belém", "Goiânia", "Guarulhos", "Campinas", "São Luís",
+  "São Gonçalo", "Maceió", "Duque de Caxias", "Natal", "Teresina",
+  "Campo Grande", "São Bernardo do Campo", "Nova Iguaçu", "João Pessoa",
+  "Santo André", "Osasco", "Jaboatão dos Guararapes", "Ribeirão Preto",
+  "Uberlândia", "Contagem", "Sorocaba", "Aracaju", "Feira de Santana",
+  "Cuiabá", "Joinville", "Aparecida de Goiânia", "Londrina", "Juiz de Fora",
+  "Niterói", "Belford Roxo", "Campos dos Goytacazes", "Serra", "Caxias do Sul",
+  "Florianópolis", "Vila Velha", "Macapá", "São José dos Campos", "Santos",
+  "Mogi das Cruzes", "Betim", "Maringá", "Jundiaí", "Diadema", "Canoas",
+  "Carapicuíba", "Montes Claros", "Olinda", "Piracicaba", "Franca", "Boa Vista",
+  "Ponta Grossa", "Blumenau", "Limeira", "Cascavel", "Bauru", "Caucaia",
+  "Pelotas", "Ananindeua", "Uberaba", "Volta Redonda", "Vitória", "Mossoró",
+  "Cabo Frio", "Parnamirim", "Rio Branco", "Palmas", "Itaquaquecetuba", "Criciúma",
+  "Santa Maria", "Taubaté", "Petrolina", "Macaé", "Gravataí", "Sete Lagoas",
+  "Sumaré", "Itajaí", "Rondonópolis", "Viamão", "Arapiraca", "Americana",
+  "Barueri", "Dourados", "Araguaína", "Patos de Minas", "Marabá", "Itabuna",
+  "Governador Valadares", "Santarém", "Petropolis", "Marília", "Itapevi",
+  "Cachoeiro de Itapemirim", "Poços de Caldas", "Paranaguá", "Chapecó",
+  "Sobral", "Teófilo Otoni", "Araraquara", "Rio Grande", "Jequié", "Bragança Paulista",
+  "Abaetetuba", "Lages", "Barra Mansa", "Bagé", "Itu", "Varginha", "Linhares",
+  "Ourinhos", "Maracanaú", "Novo Hamburgo", "Açu", "Crato", "Pindamonhangaba",
+  "Catanduva", "Araçatuba", "Assis", "Paulo Afonso", "Itabira", "Alegrete",
+  "Passos", "Vitória da Conquista", "Erechim", "Timon", "Itapipoca", "São Carlos",
+  "Patos", "Nova Friburgo", "Juazeiro", "Garanhuns", "Guarapuava", "Barretos",
+  "Sertãozinho", "Formosa", "Cabo de Santo Agostinho", "Parnaíba", "Caruaru",
+  "Açailândia", "Divinópolis", "Sinop", "Chapadinha", "Santa Cruz do Sul",
+  "Ji-Paraná", "Ariquemes", "Capanema", "Abreu e Lima", "Altamira", "Itapecerica da Serra"
+];
+
+export default cidades;
