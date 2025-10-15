@@ -9,7 +9,7 @@ import {
   FaChevronLeft,
   FaUserCircle,
 } from 'react-icons/fa'
-import '../styles/Sidebar.css'
+import '../styles/SideBar.css'
 
 export default function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false)
