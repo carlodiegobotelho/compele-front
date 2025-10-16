@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://34.232.0.139/compele-api",
+  baseURL: "https://compele.online/compele-api",
 });
 
 api.interceptors.request.use((config) => {
