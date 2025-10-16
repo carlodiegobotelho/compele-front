@@ -1,0 +1,241 @@
+/* ===== LISTA DE PENDÊNCIAS ===== */
+.pendencias-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+/* ===== CARD ===== */
+.card-pendencia {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px 25px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-pendencia:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* ===== HEADER DO CARD ===== */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.header-left {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-header h3 {
+  color: #171c2e;
+  margin: 0;
+}
+
+.cidade {
+  font-size: 0.9rem;
+  color: #2563eb;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+/* ===== CÓDIGO DA RESERVA ===== */
+.codigo {
+  margin-top: 8px;
+  font-weight: 600;
+  color: #444;
+}
+
+/* ===== CORPO DO CARD ===== */
+.card-body {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.card-body p {
+  margin: 4px 0;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+/* Campo motivo ocupa 2 colunas */
+.col-2 {
+  grid-column: span 2;
+}
+
+/* ===== LINKS ===== */
+.link-imovel {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #2563eb;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.link-imovel:hover {
+  text-decoration: underline;
+}
+
+/* ===== AÇÕES ===== */
+.card-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.btn-aprovar,
+.btn-reprovar,
+.btn-detalhar {
+  border: none;
+  border-radius: 6px;
+  padding: 10px 18px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: 0.2s;
+}
+
+.btn-aprovar {
+  background: #22c55e;
+  color: #fff;
+}
+.btn-reprovar {
+  background: #ef4444;
+  color: #fff;
+}
+.btn-detalhar {
+  background: #e5e7eb;
+  color: #111;
+}
+
+.btn-aprovar:hover {
+  background: #16a34a;
+}
+.btn-reprovar:hover {
+  background: #dc2626;
+}
+.btn-detalhar:hover {
+  background: #d1d5db;
+}
+
+/* ===== ESTADO BUSY ===== */
+.busy button {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* ===== BOTÃO FLUTUANTE DE REFRESH ===== */
+.floating-refresh {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 18px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s, background-color 0.2s;
+  z-index: 10;
+}
+
+.floating-refresh:hover {
+  background-color: #1e40af;
+  transform: scale(1.1);
+}
+
+/* ===== MODAL ===== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  width: 400px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-content h3 {
+  color: #171c2e;
+  font-size: 1.1rem;
+  margin-bottom: 15px;
+}
+
+.modal-content textarea {
+  width: 100%;
+  height: 100px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  resize: none;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.btn-cancelar {
+  background: #e5e7eb;
+  color: #111;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 16px;
+  cursor: pointer;
+}
+
+.btn-cancelar:hover {
+  background: #d1d5db;
+}
+
+/* ===== ANIMAÇÕES ===== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ===== ESTADO VAZIO ===== */
+.no-pendencias {
+  text-align: center;
+  margin-top: 80px;
+  color: #6b7280;
+}
+
+.coffee-icon {
+  font-size: 80px;
+  color: #d1d5db;
+  margin-bottom: 10px;
+}
