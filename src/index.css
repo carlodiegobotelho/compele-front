@@ -79,10 +79,6 @@ button {
   transition: 0.2s;
 }
 
-button:hover {
-  background-color: #1e4ed8;
-}
-
 /* ============================= */
 /* LAYOUT PRINCIPAL COM SIDEBAR */
 /* ============================= */

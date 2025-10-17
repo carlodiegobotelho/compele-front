@@ -5,6 +5,7 @@ import Principal from './pages/Principal'
 import SolicitarReserva from './pages/SolicitarReserva'
 import MinhasSolicitacoes from './pages/MinhasSolicitacoes'
 import MinhasPendencias from './pages/MinhasPendencias'
+import DetalheReserva from './pages/DetalheReserva'
 import Sidebar from './components/Sidebar'
 
 export default function App() {
@@ -29,6 +30,7 @@ export default function App() {
           <Route path="/solicitar-reserva" element={<SolicitarReserva />} />
           <Route path="/minhas-pendencias" element={<MinhasPendencias />} />
           <Route path="/minhas-solicitacoes" element={<MinhasSolicitacoes />} />
+          <Route path="/reserva/:id" element={<DetalheReserva />} />
           <Route path="*" element={<Navigate to="/login" />} />
         </Routes>
       </div>

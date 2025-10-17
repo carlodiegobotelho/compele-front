@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import api from "../services/api";
 import PageHeader from "../components/PageHeader";
+import { useNavigate } from 'react-router-dom'
 import {
   FaCoffee,
   FaCheck,
@@ -18,7 +19,8 @@ export default function MinhasPendencias() {
   const [showModal, setShowModal] = useState(false);
   const [observacao, setObservacao] = useState("");
   const [decisaoAtual, setDecisaoAtual] = useState(null); // {id, aprovar}
-
+  const navigate = useNavigate();
+  
   const carregarPendencias = async () => {
     setLoading(true);
     try {
@@ -129,7 +131,10 @@ export default function MinhasPendencias() {
                 >
                   <FaTimes /> Reprovar
                 </button>
-                <button className="btn-detalhar" disabled={busyCard === p.id}>
+                <button
+                  className="btn-detalhar" 
+                  onClick={() => navigate(`/reserva/${p.id}`, { state: { fromList: true } })}
+                  disabled={busyCard === p.id}>
                   <FaEye /> Detalhar
                 </button>
               </div>

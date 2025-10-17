@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import api from "../services/api";
 import { FaInfoCircle, FaSearch, FaEye } from "react-icons/fa";
+import { useNavigate } from 'react-router-dom'
 import "../styles/MinhasSolicitacoes.css";
 
 export default function MinhasSolicitacoes() {
+  const navigate = useNavigate();
   const dataInicio = new Date();
   dataInicio.setDate(dataInicio.getDate() - 10);
   const dataFim = new Date();
@@ -197,7 +199,9 @@ export default function MinhasSolicitacoes() {
                     </div>
                   </td>
                   <td>
-                    <button className="btn-detalhar">
+                    <button
+                      className="btn-detalhar"
+                      onClick={() => navigate(`/reserva/${s.id}`, { state: { fromList: true } })}>
                       <FaEye /> Detalhar
                     </button>
                   </td>
