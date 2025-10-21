@@ -7,6 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import PageHeader from "../components/PageHeader";
 import "../styles/SolicitarReserva.css";
 import cidades from "../data/cidades";
+import { FaExternalLinkAlt, FaCommentDots } from "react-icons/fa";
 
 export default function SolicitarReserva() {
   const hoje = new Date().toISOString().split("T")[0];
@@ -111,10 +112,35 @@ export default function SolicitarReserva() {
       <PageHeader title="Solicitar Reserva" />
 
       <form className="form-reserva" onSubmit={handleSubmit}>
-        {/* Linha 1 */}
         <div className="form-row">
           <div className="form-group">
-            <label>Data Início</label>
+            <label>Nome Colaborador *</label>
+            <input
+              type="text"
+              name="nomeColaborador"
+              value={form.nomeColaborador}
+              onChange={handleChange}
+              required
+              placeholder="Digite o nome do colaborador"
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Email Colaborador *</label>
+            <input
+              type="text"
+              name="nomeColaborador"
+              value={form.emailColaborador}
+              onChange={handleChange}
+              required
+              placeholder="Digite o email do colaborador"
+            />
+          </div>
+        </div>
+
+        <div className="form-row">
+          <div className="form-group">
+            <label>Data Início *</label>
             <input
               type="date"
               name="dataInicio"
@@ -126,7 +152,7 @@ export default function SolicitarReserva() {
           </div>
 
           <div className="form-group">
-            <label>Data Fim</label>
+            <label>Data Fim *</label>
             <input
               type="date"
               name="dataFim"
@@ -138,10 +164,9 @@ export default function SolicitarReserva() {
           </div>
         </div>
 
-        {/* Linha 2 */}
         <div className="form-row">
           <div className="form-group">
-            <label>Cidade</label>
+            <label>Cidade *</label>
             <input
               type="text"
               name="cidade"
@@ -160,7 +185,7 @@ export default function SolicitarReserva() {
           </div>
 
           <div className="form-group">
-            <label>Quantidade de Pessoas</label>
+            <label>Quantidade de Pessoas *</label>
             <input
               type="number"
               name="quantidadePessoas"
@@ -172,7 +197,30 @@ export default function SolicitarReserva() {
           </div>
         </div>
 
-        {/* Linha 3 */}
+ <div className="form-row">
+          <div className="form-group">
+            <label>Valor *</label>
+            <input
+              type="text"
+              name="valorImovel"
+              value={form.valorImovel}
+              onChange={handleMoneyChange}
+              placeholder="R$ 0,00"
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Centro de Custo *</label>
+            <input
+              type="text"
+              name="centroDeCusto"
+              value={form.centroDeCusto}
+              onChange={handleMoneyChange}
+              placeholder="Digite o centro de custo"
+            />
+          </div>
+        </div>
+
         <div className="form-row">
           <div className="form-group">
             <label>Nome do Anfitrião</label>
@@ -196,86 +244,53 @@ export default function SolicitarReserva() {
               required
             />
           </div>
-
-
         </div>
 
-        {/* Linha 4 */}
         <div className="form-row">
           <div className="form-group">
-            <label>Valor do Imóvel</label>
-            <input
-              type="text"
-              name="valorImovel"
-              value={form.valorImovel}
-              onChange={handleMoneyChange}
-              placeholder="R$ 0,00"
-            />
+            <label>Link do Imóvel *</label>
+            <div className="input-with-action">
+              <input
+                type="url"
+                name="linkImovel"
+                value={form.linkImovel}
+                onChange={handleChange}
+                placeholder="https://..."
+              />
+              {form.linkImovel && /^https?:\/\/.+\..+/.test(form.linkImovel) && (
+                <button
+                  type="button"
+                  className="btn-link"
+                  onClick={() => window.open(form.linkImovel, "_blank")}
+                  title="Abrir link do imóvel"
+                >
+                  <FaExternalLinkAlt />
+                </button>
+              )}
+            </div>
           </div>
 
           <div className="form-group">
-            <label>Valor Real</label>
-            <input
-              type="text"
-              name="valorReal"
-              value={form.valorReal}
-              onChange={handleMoneyChange}
-              placeholder="R$ 0,00"
-            />
+            <label>Motivo *</label>
+            <div className="input-with-action">
+              <input
+                name="motivo"
+                value={form.motivo}
+                onChange={handleChange}
+                type="text"
+                placeholder="Descreva o motivo da reserva"
+              />
+              {form.motivo && (
+                <div className="tooltip-container-motivo">
+                  <FaCommentDots className="tooltip-icon-motivo" />
+                  <span className="tooltip-text-motivo">{form.motivo}</span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* Linha 5 */}
-        <div className="form-row">
-          <div className="form-group">
-            <label>Valor com Taxa</label>
-            <input
-              type="text"
-              name="valorComTaxa"
-              value={form.valorComTaxa}
-              onChange={handleMoneyChange}
-              placeholder="R$ 0,00"
-            />
-          </div>
 
-          <div className="form-group">
-            <label>Tipo de Reserva</label>
-            <select
-              name="tipoReserva"
-              value={form.tipoReserva}
-              onChange={handleChange}
-            >
-              <option value="1">Nova</option>
-              <option value="2">Renovação</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Linha 6 */}
-        <div className="form-row">
-          <div className="form-group">
-            <label>Link do Imóvel</label>
-            <input
-              type="url"
-              name="linkImovel"
-              value={form.linkImovel}
-              onChange={handleChange}
-              placeholder="https://..."
-            />
-          </div>
-        </div>
-
-        {/* Linha 7 */}
-        <div className="form-group">
-          <label>Motivo</label>
-          <textarea
-            name="motivo"
-            value={form.motivo}
-            onChange={handleChange}
-            rows="4"
-            required
-          ></textarea>
-        </div>
 
         <button type="submit" className="btn-enviar">
           Enviar Solicitação

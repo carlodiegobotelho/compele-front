@@ -8,6 +8,7 @@ import {
   FaBars,
   FaChevronLeft,
   FaUserCircle,
+  FaCalendarCheck,
 } from 'react-icons/fa'
 import '../styles/SideBar.css'
 
@@ -35,7 +36,7 @@ export default function Sidebar() {
     { name: 'Principal', icon: <FaHome />, path: '/principal' },
     { name: 'Solicitar Reserva', icon: <FaPlus />, path: '/solicitar-reserva' },
     { name: 'Minhas Pendências', icon: <FaTasks />, path: '/minhas-pendencias' },
-    { name: 'Minhas Solicitações', icon: <FaTasks />, path: '/minhas-solicitacoes' },
+    { name: 'Relatório de Reservas', icon: <FaCalendarCheck />, path: '/minhas-solicitacoes' },
   ]
 
   return (

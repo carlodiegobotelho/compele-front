@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import api from "../services/api";
 import { FaInfoCircle, FaSearch, FaEye } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom'
+import PageHeader from "../components/PageHeader";
 import "../styles/MinhasSolicitacoes.css";
 
 export default function MinhasSolicitacoes() {
@@ -97,11 +98,8 @@ export default function MinhasSolicitacoes() {
 
   return (
     <div className="page-wrapper">
-      <div className="page-header">
-        <h1>Minhas Solicitações</h1>
-        <div className="header-line"></div>
-
-        <form className="filtro-header" onSubmit={handleBuscar}>
+      <PageHeader title="Relatório de Reservas">
+        <form onSubmit={handleBuscar}>
             <div className="filtro-inline">
                 <div className="filtro-group">
                 <label>Data Início</label>
@@ -139,7 +137,7 @@ export default function MinhasSolicitacoes() {
                 </button>
             </div>
         </form>
-      </div>
+      </PageHeader>
 
       <div className="table-wrapper">
         {loading ? (

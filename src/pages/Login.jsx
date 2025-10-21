@@ -40,8 +40,9 @@ export default function Login() {
   return (
     <div className="login-container">
       <div className="login-card">
-        <img src="/logo.png" alt="COMPELE" className="logo" />
-        <h2>Login</h2>
+        <h2>Compele</h2>
+        <div className="divider-login"></div>
+        <h3>Acesse sua conta</h3>
         <form onSubmit={handleLogin}>
           <label>E-mail</label>
           <input
@@ -53,7 +54,6 @@ export default function Login() {
 
           <div className="senha-row">
             <label>Senha</label>
-            <a href="#">Esqueceu a senha?</a>
           </div>
           <input
             type="password"
