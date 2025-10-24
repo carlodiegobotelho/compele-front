@@ -81,8 +81,8 @@ export default function MinhasPendencias() {
             <div className={`card-pendencia ${busyCard === p.id ? "busy" : ""}`} key={p.id}>
               <div className="card-header">
                 <div className="header-left">
-                  <h3>Solicitante: {p.usuarioSolicitanteNome}</h3>
-                  <span className="cidade">{p.cidade}</span>
+                  <h3>Colaborador: {p.usuarioSolicitanteNome}</h3>
+                  <span className="cidade">Cidade: {p.cidade}</span>
                 </div>
                 <a
                   href={p.linkImovel}
@@ -108,7 +108,6 @@ export default function MinhasPendencias() {
                 <div className="col">
                   <p><strong>Valor Imóvel:</strong> {p.valorImovel.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</p>
                   <p><strong>Valor Real:</strong> {p.valorReal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</p>
-                  <p><strong>Valor c/ Taxa:</strong> {p.valorComTaxa.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</p>
                 </div>
 
                 <div className="col-2">

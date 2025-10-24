@@ -30,7 +30,7 @@
 }
 
 .solicitante-nome {
-  font-size: 1.9rem;
+  font-size: 1.6rem;
   font-weight: 700;
   color: #171c2e;
   margin: 0;
@@ -135,13 +135,18 @@
 }
 
 /* ===== LINK DO IMÓVEL ===== */
+.container-link-imovel {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .link-imovel {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   color: #2563eb;
   font-weight: 600;
-  margin-top: 20px;
   text-decoration: none;
   font-size: 1rem;
 }
@@ -228,8 +233,8 @@
 }
 
 .modal-content textarea {
-  width: 100%;
-  height: 110px;
+  width: 95%;
+  height: 100px;
   border: 1px solid #ccc;
   border-radius: 8px;
   padding: 10px;
@@ -272,4 +277,86 @@
 
 .btn-voltar:hover {
   text-decoration: underline;
+}
+
+/* ===== BOTÕES FLUTUANTES ===== */
+/* ===== BOTÕES FLUTUANTES VERTICAIS (ISOLADOS) ===== */
+.floating-actions-vertical {
+  position: fixed;
+  bottom: 50px;
+  right: 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  z-index: 50;
+}
+
+/* contêiner fixo para cada botão */
+.floating-btn {
+  position: relative;
+  height: 65px;
+  width: 65px;
+  border: none;
+  border-radius: 50px;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  overflow: visible; /* importante para permitir expansão fora do contêiner */
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+/* Ícone fixo no centro */
+.floating-btn .icon {
+  font-size: 22px;
+  position: absolute;
+  right: 22px;
+}
+
+/* Label fora do botão inicialmente */
+.floating-btn .label {
+  position: absolute;
+  right: 70px; /* começa fora */
+  opacity: 0;
+  background: rgba(17, 24, 39, 0.9);
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 8px;
+  white-space: nowrap;
+  transform: translateX(10px);
+  transition: all 0.25s ease;
+  pointer-events: none;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+/* Mostra o label flutuando à esquerda no hover */
+.floating-btn:hover .label {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Cores */
+.btn-aprovar {
+  background: #22c55e;
+}
+.btn-aprovar:hover {
+  background: #16a34a;
+}
+
+.btn-reprovar {
+  background: #ef4444;
+}
+.btn-reprovar:hover {
+  background: #dc2626;
+}
+
+/* Estado desabilitado */
+.floating-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }

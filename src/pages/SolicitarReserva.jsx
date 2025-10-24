@@ -13,18 +13,18 @@ export default function SolicitarReserva() {
   const hoje = new Date().toISOString().split("T")[0];
 
   const [form, setForm] = useState({
-    dataInicio: hoje,
-    dataFim: hoje,
-    cidade: "",
-    nomeAnfitriao: "",
-    telefoneAnfitriao: "",
-    linkImovel: "",
-    valorImovel: "",
-    valorReal: "",
-    valorComTaxa: "",
-    tipoReserva: "1",
-    quantidadePessoas: 1,
-    motivo: "",
+      dataInicio: hoje,
+      dataFim: hoje,
+      cidade: "",
+      nomeColaborador: "",
+      emailColaborador: "",
+      nomeAnfitriao: "",
+      telefoneAnfitriao: "",
+      linkImovel: "",
+      valorImovel: "",
+      centroDeCusto: "",
+      quantidadePessoas: 1,
+      motivo: "",
   });
 
   const handleChange = (e) => {
@@ -52,13 +52,13 @@ export default function SolicitarReserva() {
       dataInicio: form.dataInicio,
       dataFim: form.dataFim,
       cidade: form.cidade,
+      nomeColaborador: form.nomeColaborador,
+      emailColaborador: form.emailColaborador,
       nomeAnfitriao: form.nomeAnfitriao,
       telefoneAnfitriao: form.telefoneAnfitriao,
       linkImovel: form.linkImovel,
       valorImovel: toDecimal(form.valorImovel),
-      valorReal: toDecimal(form.valorReal),
-      valorComTaxa: toDecimal(form.valorComTaxa),
-      tipoReserva: Number(form.tipoReserva),
+      centroDeCusto: form.centroDeCusto,
       quantidadePessoas: Number(form.quantidadePessoas),
       motivo: form.motivo,
     };
@@ -73,13 +73,13 @@ export default function SolicitarReserva() {
         dataInicio: hoje,
         dataFim: "",
         cidade: "",
+        nomeColaborador: "",
+        emailColaborador: "",
         nomeAnfitriao: "",
         telefoneAnfitriao: "",
         linkImovel: "",
         valorImovel: "",
-        valorReal: "",
-        valorComTaxa: "",
-        tipoReserva: "1",
+        centroDeCusto: "",
         quantidadePessoas: 1,
         motivo: "",
       });
@@ -128,12 +128,12 @@ export default function SolicitarReserva() {
           <div className="form-group">
             <label>Email Colaborador *</label>
             <input
-              type="text"
-              name="nomeColaborador"
+              type="email"
+              name="emailColaborador"
               value={form.emailColaborador}
               onChange={handleChange}
               required
-              placeholder="Digite o email do colaborador"
+              placeholder="colaborador@dominio.com"
             />
           </div>
         </div>
@@ -197,7 +197,7 @@ export default function SolicitarReserva() {
           </div>
         </div>
 
- <div className="form-row">
+        <div className="form-row">
           <div className="form-group">
             <label>Valor *</label>
             <input
@@ -215,7 +215,7 @@ export default function SolicitarReserva() {
               type="text"
               name="centroDeCusto"
               value={form.centroDeCusto}
-              onChange={handleMoneyChange}
+              onChange={handleChange}
               placeholder="Digite o centro de custo"
             />
           </div>

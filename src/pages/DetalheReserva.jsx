@@ -60,7 +60,7 @@ export default function DetalheReserva() {
   if (loading) return <p>Carregando reserva...</p>;
   if (!reserva) return <p>Reserva não encontrada.</p>;
 
-  const isAprovavel = reserva.usuarioAprovador && reserva.statusId === 1;
+  const isAprovavel = reserva.perfilUsuario == "aprovador" && reserva.statusId === 1;
 
   return (
     <div className="page-wrapper">
@@ -76,8 +76,9 @@ export default function DetalheReserva() {
                 </button>
                 )}
                 <div className="header-info">
-                    <h2 className="solicitante-nome">{reserva.usuarioSolicitanteNome}</h2>
-                    <p className="cidade">{reserva.cidade}</p>
+                    <h2 className="solicitante-nome">
+                        Colaborador: {reserva.usuarioColaboradorNome}</h2>
+                    <p className="cidade">Cidade: {reserva.cidade}</p>
                 </div>
             </div>
 
@@ -94,17 +95,54 @@ export default function DetalheReserva() {
             </span>
             </div>
 
-        <p className="codigo">Código da Reserva: <strong>{reserva.codigoReserva}</strong></p>
-
         <div className="grid-info">
-          <div><strong>Período:</strong> {new Date(reserva.dataInicio).toLocaleDateString("pt-BR")} - {new Date(reserva.dataFim).toLocaleDateString("pt-BR")}</div>
-          <div><strong>Tipo de Reserva:</strong> {reserva.tipoReserva === 1 ? "Nova" : "Renovação"}</div>
-          <div><strong>Anfitrião:</strong> {reserva.nomeAnfitriao}</div>
-          <div><strong>Telefone:</strong> {reserva.telefoneAnfitriao}</div>
-          <div><strong>Quantidade de Pessoas:</strong> {reserva.quantidadePessoas}</div>
-          <div><strong>Valor Imóvel:</strong> {reserva.valorImovel.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</div>
-          <div><strong>Valor Real:</strong> {reserva.valorReal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</div>
-          <div><strong>Valor c/ Taxa:</strong> {reserva.valorComTaxa.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</div>
+          <div>
+            <strong>Data Solicitação:</strong>
+            {new Date(reserva.dataCriacao).toLocaleDateString("pt-BR")}
+          </div>
+          <div>
+            <strong>Período Reserva:</strong>
+            {new Date(reserva.dataInicio).toLocaleDateString("pt-BR")} - {new Date(reserva.dataFim).toLocaleDateString("pt-BR")}
+          </div>
+          <div>
+            <strong>Quantidade de Pessoas:</strong>
+            {reserva.quantidadePessoas}
+          </div>
+          <div>
+            <strong>Valor Imóvel:</strong>
+            {reserva.valorImovel.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+          </div>
+          <div>
+            <strong>Valor Real:</strong>
+            {reserva.valorReal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+          </div>
+          <div>
+            <strong>Centro De Custo:</strong>
+            {reserva.centroDeCusto}
+          </div> 
+          <div>
+            <strong>Anfitrião:</strong>
+            {reserva.nomeAnfitriao}
+          </div>
+          <div>
+            <strong>Telefone:</strong>
+            {reserva.telefoneAnfitriao}
+          </div>
+          <div className="container-link-imovel">
+            <a
+              href={reserva.linkImovel}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="link-imovel"
+            >
+              Ver imóvel <FaExternalLinkAlt size={12} />
+            </a>
+          </div> 
+          <div>
+            <strong>Código Reserva:</strong>
+            {reserva.codigoReserva}
+          </div>
+
         </div>
 
         <div className="motivo">
@@ -112,30 +150,26 @@ export default function DetalheReserva() {
           <p>{reserva.motivo}</p>
         </div>
 
-        <a
-          href={reserva.linkImovel}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="link-imovel"
-        >
-          Ver imóvel <FaExternalLinkAlt size={12} />
-        </a>
-
         {isAprovavel && (
-          <div className="detalhe-actions">
+          <div className="floating-actions-vertical">
             <button
-              className="btn-aprovar"
+              className="floating-btn btn-aprovar"
               onClick={() => handleOpenModal(true)}
               disabled={busy}
+              title="Aprovar"
             >
-              <FaCheck /> Aprovar
+              <span className="label">Aprovar</span>
+              <FaCheck className="icon" />
             </button>
+
             <button
-              className="btn-reprovar"
+              className="floating-btn btn-reprovar"
               onClick={() => handleOpenModal(false)}
               disabled={busy}
+              title="Reprovar"
             >
-              <FaTimes /> Reprovar
+              <span className="label">Reprovar</span>
+              <FaTimes className="icon" />
             </button>
           </div>
         )}
