@@ -9,3 +9,8 @@ export async function obterSolicitacoes() {
   const response = await api.get("/api/reservas/minhas-solicitacoes");
   return response.data;
 }
+
+export async function obterDashboard(data) {
+  const response = await api.get("/api/reservas/dashboard", { params : data });
+  return response.data;
+}

@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
 import Login from './pages/Login'
-import Principal from './pages/Principal'
+import DashboardReservas from './pages/DashboardReservas'
 import SolicitarReserva from './pages/SolicitarReserva'
 import MinhasSolicitacoes from './pages/MinhasSolicitacoes'
 import MinhasPendencias from './pages/MinhasPendencias'
@@ -26,7 +26,7 @@ export default function App() {
       <div className={`page-content ${!isLoginPage ? 'with-sidebar' : ''}`}>
         <Routes>
           <Route path="/login" element={<Login />} />
-          <Route path="/principal" element={<Principal />} />
+          <Route path="/principal" element={<DashboardReservas />} />
           <Route path="/solicitar-reserva" element={<SolicitarReserva />} />
           <Route path="/minhas-pendencias" element={<MinhasPendencias />} />
           <Route path="/minhas-solicitacoes" element={<MinhasSolicitacoes />} />
