@@ -4,10 +4,14 @@ import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { ToastContainer } from 'react-toastify'
 import { login } from '../services/authService'
+import {
+  FaSpinner,
+} from "react-icons/fa";
 
 export default function Login() {
   const [email, setEmail] = useState('')
   const [senha, setSenha] = useState('')
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -19,7 +23,7 @@ export default function Login() {
 
   async function handleLogin(e) {
     e.preventDefault()
-
+    setLoading(true);
     try {
         const response = await login(email, senha)
 
@@ -34,6 +38,8 @@ export default function Login() {
       navigate('/principal')
     } catch (error) {
       toast.error(error?.erros?.[0] || 'Erro ao fazer login')
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -62,7 +68,15 @@ export default function Login() {
             required
           />
 
-          <button type="submit">Entrar</button>
+          <button type="submit" disabled={loading}>
+            {loading ? (
+              <>
+                <FaSpinner className="spinner" /> Entrando...
+              </>
+            ) : (
+              "Entrar"
+            )}
+          </button>
         </form>
       </div>
       <ToastContainer position="top-right" />
