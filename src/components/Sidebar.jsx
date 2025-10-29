@@ -9,6 +9,7 @@ import {
   FaChevronLeft,
   FaUserCircle,
   FaCalendarCheck,
+  FaFilePdf,
 } from 'react-icons/fa'
 import '../styles/SideBar.css'
 
@@ -37,6 +38,7 @@ export default function Sidebar() {
     { name: 'Solicitar Reserva', icon: <FaPlus />, path: '/solicitar-reserva' },
     { name: 'Minhas Pendências', icon: <FaTasks />, path: '/minhas-pendencias' },
     { name: 'Relatório de Reservas', icon: <FaCalendarCheck />, path: '/minhas-solicitacoes' },
+    { name: 'Notas de Débito', icon: <FaFilePdf />, path: '/inclusao-arquivo' },
   ]
 
   return (
