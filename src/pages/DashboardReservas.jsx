@@ -4,8 +4,11 @@ import {
   FaClipboardList,
   FaMoneyBillWave,
   FaChartLine,
+  FaCalendarDay,
   FaSearch,
-  FaArrowDown,
+  FaInfoCircle,
+  FaEye,
+  FaEyeSlash 
 } from "react-icons/fa";
 import {
   LineChart,
@@ -15,6 +18,9 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  BarChart,
+  Bar,
+  Cell,
 } from "recharts";
 import api from "../services/api";
 import "../styles/DashboardReservas.css";
@@ -25,6 +31,9 @@ export default function DashboardReservas() {
   const [historico, setHistorico] = useState(null);
   const [colaboradores, setColaboradores] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [showValoresRealizados, setShowValoresRealizados] = useState(false);
+  const [showValoresComTaxa, setShowValoresComTaxa] = useState(true);
+  const [showValoresMediosPorDiaria, setShowValoresMediosPorDiaria] = useState(true);
 
   const [filtros, setFiltros] = useState({
     colaborador: "",
@@ -39,29 +48,39 @@ export default function DashboardReservas() {
 
   const handleCardClick = async (metric) => {
     setActiveMetric(metric);
-      setHistorico(metric == "quantidade" ?
-        resumo.historicoQuantidade : metric == "valorTotal" ?
-            resumo.historicoValorTotal : resumo.historicoValorReal);
+    setHistorico(
+      metric === "quantidade"
+        ? resumo?.historicoQuantidade
+        : metric === "valorRealizado"
+        ? resumo?.historicoValorRealizado
+        : metric === "valorComTaxa"
+        ? resumo?.historicoValorComTaxa
+        : resumo?.historicoValorMedio
+    );
   };
 
-  const carregarDashboard = async (metric= activeMetric) => {
+  const carregarDashboard = async (metric = activeMetric) => {
     try {
       setLoading(true);
-
       const response = await api.get("/api/reservas/dashboard", {
         params: {
           colaborador: filtros.colaborador || null,
           centroCusto: filtros.centroCusto || null,
           dataInicio: filtros.dataInicio || null,
           dataFim: filtros.dataFim || null,
-          entidade: metric
+          entidade: metric,
         },
       });
-
       setResumo(response.data);
-      setHistorico(metric == "quantidade" ?
-        response.data.historicoQuantidade : metric == "valorTotal" ?
-            response.data.historicoValorTotal : response.data.historicoValorReal);
+      setHistorico(
+        metric === "quantidade"
+          ? response.data.historicoQuantidade
+          : metric === "valorRealizado"
+          ? response.data.historicoValorRealizado
+          : metric === "valorComTaxa"
+          ? response.data.historicoValorComTaxa
+          : response.data.historicoValorMedio
+      );
     } catch (err) {
       console.error("Erro ao carregar dashboard:", err);
     } finally {
@@ -69,12 +88,10 @@ export default function DashboardReservas() {
     }
   };
 
-   const carregarColaboradores = async () => {
+  const carregarColaboradores = async () => {
     try {
       const response = await api.get("/api/cadastros/colaboradores");
-      if (Array.isArray(response.data)) {
-        setColaboradores(response.data);
-      }
+      if (Array.isArray(response.data)) setColaboradores(response.data);
     } catch (err) {
       console.error("Erro ao carregar colaboradores:", err);
     }
@@ -92,17 +109,13 @@ export default function DashboardReservas() {
       minimumFractionDigits: 2,
     });
 
-  const calcularEconomia = () => {
-    if (!resumo) return null;
-    if (resumo.valorReal < resumo.valorTotal) {
-      const economia =
-        ((resumo.valorTotal - resumo.valorReal) / resumo.valorTotal) * 100;
-      return economia > 2 ? economia.toFixed(1) : null;
-    }
-    return null;
+  const coresStatus = {
+    Pendente: "#facc15",
+    Aprovado: "#3b82f6",
+    Reprovado: "#ef4444",
+    Cancelado: "#8b5cf6",
+    Concluida: "#22c55e",
   };
-
-  const economia = calcularEconomia();
 
   return (
     <div className="page-wrapper">
@@ -147,73 +160,139 @@ export default function DashboardReservas() {
           onChange={handleFiltroChange}
         />
 
-        <button onClick={carregarDashboard} className="btn-buscar-dashboard" disabled={loading}>
-          {loading ? (
-            <span className="spinner" />
-          ) : (
-            <>
-              <FaSearch /> <span>Buscar</span>
-            </>
-          )}
+        <button
+          onClick={carregarDashboard}
+          className="btn-buscar-dashboard"
+          disabled={loading}
+        >
+          {loading ? <span className="spinner" /> : <><FaSearch /> <span>Buscar</span></>}
         </button>
       </div>
 
       {/* === CARDS PRINCIPAIS === */}
       {resumo && (
         <div className="cards-container">
+          {/* === QUANTIDADE DE RESERVAS === */}
           <div
-            className={`card kpi ${
-              activeMetric === "quantidade" ? "active" : ""
-            }`}
+            className={`card-quantidade-reservas card kpi ${activeMetric === "quantidade" ? "active" : ""}`}
             onClick={() => handleCardClick("quantidade")}
           >
+            <FaInfoCircle className="info-icon-dash-card" />
             <FaClipboardList />
-            <div>
+            <div className="card-content">
               <strong>{resumo.quantidade}</strong>
-              <span>Reservas</span>
+              <span>Número de Reservas</span>
+
+              {resumo.contador && resumo.contador.length > 0 && (
+                <div className="status-tooltip">
+                  {resumo.contador
+                  .filter((item) => { return item.quantidade > 0 })
+                  .map((item) => {
+                    const colorMap = {
+                      Pendente: "#facc15",   // 🟡
+                      Aprovado: "#3b82f6",   // 🔵
+                      Reprovado: "#ef4444",  // 🔴
+                      Cancelado: "#8b5cf6",  // 🟣
+                      Concluida: "#22c55e",  // 🟢
+                    };
+                    return (
+                      <div key={item.label} className="status-item">
+                        <span
+                          className="status-dot"
+                          style={{ backgroundColor: colorMap[item.label] || "#9ca3af" }}
+                        ></span>
+                        <span className="status-label">
+                          {item.label}: {item.quantidade}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
 
+
           <div
-            className={`card kpi ${
-              activeMetric === "valorTotal" ? "active" : ""
-            }`}
-            onClick={() => handleCardClick("valorTotal")}
+            className={`card kpi ${activeMetric === "valorRealizado" ? "active" : ""}`}
+            onClick={() => handleCardClick("valorRealizado")}
           >
+            <div 
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowValoresRealizados(!showValoresRealizados);
+              }}>
+              {showValoresRealizados ? <FaEye className="info-icon-dash-card" /> : <FaEyeSlash className="info-icon-dash-card" />}
+            </div>
             <FaMoneyBillWave />
             <div>
-              <strong>{formatCurrency(resumo.valorTotal)}</strong>
-              <span>Valor Total</span>
+              <strong>
+                {showValoresRealizados
+                  ? formatCurrency(resumo.valorRealizado)
+                  : "••••••"}
+              </strong>
+              <span>Valor Realizado</span>
             </div>
           </div>
 
           <div
-            className={`card kpi ${
-              activeMetric === "valorReal" ? "active" : ""
-            }`}
-            onClick={() => handleCardClick("valorReal")}
+            className={`card kpi ${activeMetric === "valorComTaxa" ? "active" : ""}`}
+            onClick={() => handleCardClick("valorComTaxa")}
           >
-            <FaChartLine />
+            <div 
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowValoresComTaxa(!showValoresComTaxa);
+              }}>
+              {showValoresComTaxa ? <FaEye className="info-icon-dash-card" /> : <FaEyeSlash className="info-icon-dash-card" />}
+            </div>
+            <FaMoneyBillWave />
             <div>
               <strong>
-                {formatCurrency(resumo.valorReal)}
+                {showValoresComTaxa
+                  ? formatCurrency(resumo.valorComTaxa)
+                  : "••••••"}
               </strong>
-              <span>Valor Real</span>
+              <span>Valor com Taxa</span>
+            </div>
+          </div>
+
+          <div
+            className={`card kpi ${activeMetric === "valorMedioPorDiaria" ? "active" : ""}`}
+            onClick={() => handleCardClick("valorMedioPorDiaria")}
+          >
+            <div 
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowValoresMediosPorDiaria(!showValoresMediosPorDiaria);
+              }}>
+              {showValoresMediosPorDiaria ? <FaEye className="info-icon-dash-card" /> : <FaEyeSlash className="info-icon-dash-card" />}
+            </div>
+            <FaCalendarDay />
+            <div>
+              <strong>
+                {showValoresMediosPorDiaria
+                  ? formatCurrency(resumo.valorMedioPorDiaria)
+                  : "••••••"}
+              </strong>
+              <span>Valor Médio / Diária</span>
             </div>
           </div>
         </div>
       )}
 
-      {/* === GRÁFICO === */}
+      {/* === GRÁFICO DE LINHA === */}
       {historico && (
         <div className="grafico-container">
           <h3>
             Histórico de{" "}
             {activeMetric === "quantidade"
               ? "Reservas"
-              : activeMetric === "valorTotal"
-              ? "Valor Total"
-              : "Valor Real"}
+              : activeMetric === "valorRealizado"
+              ? "Valor Realizado"
+              : activeMetric === "valorComTaxa"
+              ? "Valor com Taxa"
+              : "Valor Médio por Diária"}
           </h3>
 
           <ResponsiveContainer width="100%" height={320}>
@@ -232,9 +311,11 @@ export default function DashboardReservas() {
                 stroke={
                   activeMetric === "quantidade"
                     ? "#3b82f6"
-                    : activeMetric === "valorTotal"
+                    : activeMetric === "valorRealizado"
+                    ? "#22c55e"
+                    : activeMetric === "valorComTaxa"
                     ? "#8b5cf6"
-                    : "#22c55e"
+                    : "#f59e0b"
                 }
                 strokeWidth={3}
                 dot={{ r: 5 }}
