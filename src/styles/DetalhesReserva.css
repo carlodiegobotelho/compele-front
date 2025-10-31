@@ -164,6 +164,7 @@
 
 .btn-aprovar,
 .btn-reprovar,
+.btn-recibo,
 .btn-cancelar {
   border: none;
   border-radius: 8px;
@@ -184,6 +185,16 @@
 }
 .btn-aprovar:hover {
   background: #16a34a;
+  box-shadow: 0 3px 7px rgba(22, 163, 74, 0.35);
+}
+
+.btn-recibo {
+  background: blue;
+  color: #fff;
+  box-shadow: 0 2px 5px rgba(34, 197, 94, 0.3);
+}
+.btn-recibo:hover {
+  background: darkblue;
   box-shadow: 0 3px 7px rgba(22, 163, 74, 0.35);
 }
 
@@ -358,4 +369,52 @@
 .floating-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+/* ===== SEÇÃO DE RECIBOS ===== */
+.recibos-section {
+  margin-top: 40px;
+}
+
+.recibos-section h3 {
+  color: #111827;
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.notas-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.notas-table th,
+.notas-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+}
+
+.notas-table th {
+  background: #f9fafb;
+  font-weight: 600;
+  color: #374151;
+}
+
+.notas-table td {
+  color: #374151;
+}
+
+.notas-table .acoes {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.no-data {
+  color: #9ca3af;
+  font-style: italic;
+  text-align: center;
+  margin: 15px 0;
 }

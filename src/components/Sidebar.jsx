@@ -33,12 +33,14 @@ export default function Sidebar() {
     navigate('/login')
   }
 
+  const isAprovador = usuario?.perfil === "Aprovador";
+
   const menuItems = [
-    { name: 'Principal', icon: <FaHome />, path: '/principal' },
-    { name: 'Solicitar Reserva', icon: <FaPlus />, path: '/solicitar-reserva' },
-    { name: 'Minhas Pendências', icon: <FaTasks />, path: '/minhas-pendencias' },
-    { name: 'Relatório de Reservas', icon: <FaCalendarCheck />, path: '/minhas-solicitacoes' },
-    { name: 'Notas de Débito', icon: <FaFilePdf />, path: '/inclusao-arquivo' },
+    { name: 'Principal', icon: <FaHome />, path: '/principal', showMenu: true },
+    { name: 'Solicitar Reserva', icon: <FaPlus />, path: '/solicitar-reserva', showMenu: true },
+    { name: 'Minhas Pendências', icon: <FaTasks />, path: '/minhas-pendencias', showMenu: isAprovador },
+    { name: 'Relatório de Reservas', icon: <FaCalendarCheck />, path: '/minhas-solicitacoes', showMenu: true },
+    { name: 'Notas', icon: <FaFilePdf />, path: '/inclusao-arquivo', showMenu: true },
   ]
 
   return (
@@ -66,16 +68,18 @@ export default function Sidebar() {
 
 
         <ul className="menu">
-            {menuItems.map((item) => (
-            <li
-                key={item.name}
-                className={location.pathname === item.path ? 'active' : ''}
-                onClick={() => navigate(item.path)}
-            >
-                {item.icon}
-                {!isCollapsed && <span>{item.name}</span>}
-            </li>
-            ))}
+            {menuItems
+              .filter((item) => item.showMenu == true)
+              .map((item) => (
+                <li
+                  key={item.name}
+                  className={location.pathname === item.path ? "active" : ""}
+                  onClick={() => navigate(item.path)}
+                >
+                  {item.icon}
+                  {!isCollapsed && <span>{item.name}</span>}
+                </li>
+              ))}
         </ul>
 
       <div className="logout-section" onClick={handleLogout}>

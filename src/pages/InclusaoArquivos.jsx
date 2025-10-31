@@ -122,7 +122,7 @@ export default function InclusaoArquivo() {
 
   return (
     <div className="page-wrapper">
-      <PageHeader title="Notas de Débito" />
+      <PageHeader title="Notas" />
 
       {loading ? (
         <div className="loading-container">

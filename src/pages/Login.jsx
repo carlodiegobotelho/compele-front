@@ -32,7 +32,8 @@ export default function Login() {
         localStorage.setItem('Compele-DadosUsuario', JSON.stringify({
           id: response.id,
           nome: response.nome,
-          email: response.email
+          email: response.email,
+          perfil: response.perfil,
         }))
 
       navigate('/principal')
