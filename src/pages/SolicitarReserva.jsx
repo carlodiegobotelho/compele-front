@@ -7,11 +7,11 @@ import "react-toastify/dist/ReactToastify.css";
 import PageHeader from "../components/PageHeader";
 import "../styles/SolicitarReserva.css";
 import cidades from "../data/cidades";
-import { FaExternalLinkAlt, FaCommentDots } from "react-icons/fa";
+import { FaExternalLinkAlt, FaCommentDots, FaSpinner } from "react-icons/fa";
 
 export default function SolicitarReserva() {
   const hoje = new Date().toISOString().split("T")[0];
-
+  const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
       dataInicio: hoje,
       dataFim: hoje,
@@ -25,6 +25,7 @@ export default function SolicitarReserva() {
       centroDeCusto: "",
       quantidadePessoas: 1,
       motivo: "",
+      observacao: "",
   });
 
   const handleChange = (e) => {
@@ -45,6 +46,8 @@ export default function SolicitarReserva() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    setLoading(true);
+
     const toDecimal = (v) =>
       Number(v.replace(/[R$\s.]/g, "").replace(",", ".")) || 0;
 
@@ -61,6 +64,7 @@ export default function SolicitarReserva() {
       centroDeCusto: form.centroDeCusto,
       quantidadePessoas: Number(form.quantidadePessoas),
       motivo: form.motivo,
+      observacao: form.observacao,
     };
 
     try {
@@ -82,9 +86,16 @@ export default function SolicitarReserva() {
         centroDeCusto: "",
         quantidadePessoas: 1,
         motivo: "",
+        observacao: "",
       });
     } catch (err) {
-      toast.error("Erro ao enviar solicitação. Verifique os campos.");
+      console.error(error);
+      toast.error(
+        error?.response?.data?.erros?.[0] ||
+          "Erro ao enviar solicitação. Verifique os campos digitados e tente novamente."
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -114,7 +125,7 @@ export default function SolicitarReserva() {
       <form className="form-reserva" onSubmit={handleSubmit}>
         <div className="form-row">
           <div className="form-group">
-            <label>Nome Colaborador *</label>
+            <label>Nome do Colaborador *</label>
             <input
               type="text"
               name="nomeColaborador"
@@ -126,7 +137,7 @@ export default function SolicitarReserva() {
           </div>
 
           <div className="form-group">
-            <label>Email Colaborador *</label>
+            <label>Email do Colaborador *</label>
             <input
               type="email"
               name="emailColaborador"
@@ -199,13 +210,14 @@ export default function SolicitarReserva() {
 
         <div className="form-row">
           <div className="form-group">
-            <label>Valor *</label>
+            <label>Valor do Imóvel*</label>
             <input
               type="text"
               name="valorImovel"
               value={form.valorImovel}
               onChange={handleMoneyChange}
               placeholder="R$ 0,00"
+              required
             />
           </div>
 
@@ -217,6 +229,7 @@ export default function SolicitarReserva() {
               value={form.centroDeCusto}
               onChange={handleChange}
               placeholder="Digite o centro de custo"
+              required
             />
           </div>
         </div>
@@ -229,7 +242,7 @@ export default function SolicitarReserva() {
               name="nomeAnfitriao"
               value={form.nomeAnfitriao}
               onChange={handleChange}
-              required
+              placeholder="Digite o nome do anfitrião"
             />
           </div>
 
@@ -241,7 +254,6 @@ export default function SolicitarReserva() {
               value={form.telefoneAnfitriao}
               onChange={handleChange}
               placeholder="(99) 99999-9999"
-              required
             />
           </div>
         </div>
@@ -256,6 +268,7 @@ export default function SolicitarReserva() {
                 value={form.linkImovel}
                 onChange={handleChange}
                 placeholder="https://..."
+                required
               />
               {form.linkImovel && /^https?:\/\/.+\..+/.test(form.linkImovel) && (
                 <button
@@ -271,7 +284,7 @@ export default function SolicitarReserva() {
           </div>
 
           <div className="form-group">
-            <label>Motivo *</label>
+            <label>Motivo da Viagem</label>
             <div className="input-with-action">
               <input
                 name="motivo"
@@ -290,10 +303,27 @@ export default function SolicitarReserva() {
           </div>
         </div>
 
-
-
-        <button type="submit" className="btn-enviar">
-          Enviar Solicitação
+        <div className="form-row">
+          <div className="form-group">
+            <label>Observação</label>
+            <input
+              type="text"
+              name="observacao"
+              value={form.observacao}
+              onChange={handleChange}
+              placeholder="Digite observações sobre a viagem"
+            />
+          </div>
+        </div>
+        
+        <button type="submit" className="btn-enviar" disabled={loading}>
+          {loading ? (
+            <>
+              <FaSpinner className="spin" /> Enviando...
+            </>
+          ) : (
+            "Enviar Solicitação"
+          )}
         </button>
       </form>
 
