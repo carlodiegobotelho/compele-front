@@ -30,6 +30,7 @@ export default function DashboardReservas() {
   const [resumo, setResumo] = useState(null);
   const [historico, setHistorico] = useState(null);
   const [colaboradores, setColaboradores] = useState([]);
+  const [centroDeCusto, setCentroDeCusto] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showValoresRealizados, setShowValoresRealizados] = useState(false);
   const [showValoresComTaxa, setShowValoresComTaxa] = useState(true);
@@ -97,8 +98,18 @@ export default function DashboardReservas() {
     }
   };
 
+  const carregarCentroDeCusto = async () => {
+    try {
+      const response = await api.get("/api/cadastros/centro-de-custo");
+      if (Array.isArray(response.data)) setCentroDeCusto(response.data);
+    } catch (err) {
+      console.error("Erro ao carregar centro de custo:", err);
+    }
+  };
+
   useEffect(() => {
     carregarColaboradores();
+    carregarCentroDeCusto();
     carregarDashboard();
   }, []);
 
@@ -142,9 +153,11 @@ export default function DashboardReservas() {
           onChange={handleFiltroChange}
         >
           <option value="">Todos os centros de custo</option>
-          <option value="CC01">Administrativo</option>
-          <option value="CC02">Comercial</option>
-          <option value="CC03">Tecnologia</option>
+          {centroDeCusto.map((c) => (
+            <option key={c} value={c}>
+              {c}
+            </option>
+          ))}
         </select>
 
         <input
