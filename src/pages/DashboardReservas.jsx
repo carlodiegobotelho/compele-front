@@ -66,7 +66,7 @@ export default function DashboardReservas() {
       const response = await api.get("/api/reservas/dashboard", {
         params: {
           colaborador: filtros.colaborador || null,
-          centroCusto: filtros.centroCusto || null,
+          centroDeCusto: filtros.centroCusto || null,
           dataInicio: filtros.dataInicio || null,
           dataFim: filtros.dataFim || null,
           entidade: metric,
@@ -174,7 +174,7 @@ export default function DashboardReservas() {
         />
 
         <button
-          onClick={carregarDashboard}
+          onClick={carregarDashboard(activeMetric)}
           className="btn-buscar-dashboard"
           disabled={loading}
         >
