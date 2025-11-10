@@ -60,7 +60,8 @@ export default function DashboardReservas() {
     );
   };
 
-  const carregarDashboard = async (metric = activeMetric) => {
+  const carregarDashboard = async () => {
+    const metric = activeMetric;
     try {
       setLoading(true);
       const response = await api.get("/api/reservas/dashboard", {
@@ -174,7 +175,7 @@ export default function DashboardReservas() {
         />
 
         <button
-          onClick={carregarDashboard(activeMetric)}
+          onClick={carregarDashboard}
           className="btn-buscar-dashboard"
           disabled={loading}
         >
