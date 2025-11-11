@@ -31,6 +31,7 @@ export default function DashboardReservas() {
   const [historico, setHistorico] = useState(null);
   const [colaboradores, setColaboradores] = useState([]);
   const [centroDeCusto, setCentroDeCusto] = useState([]);
+  const [cidades, setCidades] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showValoresRealizados, setShowValoresRealizados] = useState(false);
   const [showValoresComTaxa, setShowValoresComTaxa] = useState(true);
@@ -39,6 +40,7 @@ export default function DashboardReservas() {
   const [filtros, setFiltros] = useState({
     colaborador: "",
     centroCusto: "",
+    cidade: "",
     dataInicio: "",
     dataFim: "",
   });
@@ -68,6 +70,7 @@ export default function DashboardReservas() {
         params: {
           colaborador: filtros.colaborador || null,
           centroDeCusto: filtros.centroCusto || null,
+          cidade: filtros.cidade || null,
           dataInicio: filtros.dataInicio || null,
           dataFim: filtros.dataFim || null,
           entidade: metric,
@@ -108,9 +111,19 @@ export default function DashboardReservas() {
     }
   };
 
+  const carregarCidades = async () => {
+    try {
+      const response = await api.get("/api/cadastros/cidades");
+      if (Array.isArray(response.data)) setCidades(response.data);
+    } catch (err) {
+      console.error("Erro ao carregar as cidades:", err);
+    }
+  };
+
   useEffect(() => {
     carregarColaboradores();
     carregarCentroDeCusto();
+    carregarCidades();
     carregarDashboard();
   }, []);
 
@@ -136,11 +149,12 @@ export default function DashboardReservas() {
       {/* === FILTROS === */}
       <div className="filtro-container">
         <select
+          style={{ width: 200 }}
           name="colaborador"
           value={filtros.colaborador}
           onChange={handleFiltroChange}
         >
-          <option value="">Todos os colaboradores</option>
+          <option value="">Todos Colaboradores</option>
           {colaboradores.map((c) => (
             <option key={c.id} value={c.id}>
               {c.nome}
@@ -149,11 +163,12 @@ export default function DashboardReservas() {
         </select>
 
         <select
+          style={{ width: 200 }}
           name="centroCusto"
           value={filtros.centroCusto}
           onChange={handleFiltroChange}
         >
-          <option value="">Todos os centros de custo</option>
+          <option value="">Todos Centros de Custo</option>
           {centroDeCusto.map((c) => (
             <option key={c} value={c}>
               {c}
@@ -161,13 +176,29 @@ export default function DashboardReservas() {
           ))}
         </select>
 
+        <select
+          style={{ width: 200 }}
+          name="cidade"
+          value={filtros.cidade}
+          onChange={handleFiltroChange}
+        >
+          <option value="">Todos Cidades</option>
+          {cidades.map((c) => (
+            <option key={c} value={c}>
+              {c}
+            </option>
+          ))}
+        </select>        
+
         <input
+          style={{ width: 120, minWidth: 120 }}        
           type="date"
           name="dataInicio"
           value={filtros.dataInicio}
           onChange={handleFiltroChange}
         />
         <input
+          style={{ width: 120, minWidth: 120 }}      
           type="date"
           name="dataFim"
           value={filtros.dataFim}
