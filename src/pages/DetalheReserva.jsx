@@ -68,6 +68,13 @@ export default function DetalheReserva() {
 
   const handleConfirmar = async () => {
     if (!reserva) return;
+
+    if (decisaoAprovar == false && !observacao)
+    {
+      toast.error("Digite uma justificativa para a reprovação da reserva.");
+      return;
+    }
+
     setBusy(true);
     setShowModal(false);
     try {
