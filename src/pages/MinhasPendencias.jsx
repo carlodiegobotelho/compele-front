@@ -81,7 +81,7 @@ export default function MinhasPendencias() {
             <div className={`card-pendencia ${busyCard === p.id ? "busy" : ""}`} key={p.id}>
               <div className="card-header">
                 <div className="header-left">
-                  <h3>Colaborador: {p.usuarioSolicitanteNome}</h3>
+                  <h3>Colaborador: {p.usuarioColaboradorNome}</h3>
                   <span className="cidade">Cidade: {p.cidade}</span>
                 </div>
                 <a
@@ -96,20 +96,17 @@ export default function MinhasPendencias() {
 
               <div className="card-body">
                 <div className="col">
-                  <p><strong>Período:</strong> {new Date(p.dataInicio).toLocaleDateString("pt-BR")} - {new Date(p.dataFim).toLocaleDateString("pt-BR")}</p>
-                  <p><strong>Tipo:</strong> {p.tipoReserva === 1 ? "Nova" : "Renovação"}</p>
+                  <p><strong>Solicitante:</strong> {p.usuarioSolicitanteNome}</p>
                   <p><strong>Qtde. Pessoas:</strong> {p.quantidadePessoas}</p>
                 </div>
                 <div className="col">
+                  <p><strong>Período:</strong> {new Date(p.dataInicio).toLocaleDateString("pt-BR")} - {new Date(p.dataFim).toLocaleDateString("pt-BR")}</p>
                   <p><strong>Anfitrião:</strong> {p.nomeAnfitriao}</p>
-                  <p><strong>Telefone:</strong> {p.telefoneAnfitriao}</p>
-                  <p><strong>Código da Reserva:</strong> {p.codigoReserva}</p>
                 </div>
                 <div className="col">
                   <p><strong>Valor Imóvel:</strong> {p.valorImovel.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</p>
-                  <p><strong>Valor Real:</strong> {p.valorReal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</p>
+                  <p><strong>Telefone:</strong> {p.telefoneAnfitriao}</p>
                 </div>
-
                 <div className="col-2">
                   <p><strong>Motivo:</strong> {p.motivo}</p>
                 </div>

@@ -102,7 +102,7 @@ export default function MinhasSolicitacoes() {
         <form onSubmit={handleBuscar}>
             <div className="filtro-inline">
                 <div className="filtro-group">
-                <label>Data Início</label>
+                <label>Data Criação Início</label>
                 <input
                     type="date"
                     name="dataCriacaoInicio"
@@ -112,7 +112,7 @@ export default function MinhasSolicitacoes() {
                 </div>
 
                 <div className="filtro-group">
-                <label>Data Fim</label>
+                <label>Data Criação Fim</label>
                 <input
                     type="date"
                     name="dataCriacaoFim"
@@ -172,7 +172,7 @@ export default function MinhasSolicitacoes() {
             <tbody>
               {sortedSolicitacoes.map((s) => (
                 <tr key={s.id}>
-                  <td>{s.usuarioSolicitanteNome || "-"}</td>
+                  <td>{s.usuarioColaboradorNome || "-"}</td>
                     <td>
                     {new Date(s.dataCriacao).toLocaleString("pt-BR", {
                         day: "2-digit",

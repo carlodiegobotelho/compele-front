@@ -166,6 +166,9 @@ export default function DetalheReserva() {
   const isAprovavel =
     reserva.perfilUsuario === "aprovador" && reserva.statusId === 1;
 
+  const exibeInclusaoRecibo =
+    reserva.perfilUsuario === "aprovador" && reserva.statusId === 2;
+
   return (
     <div className="page-wrapper">
       <PageHeader title="Detalhes da Reserva" />
@@ -203,7 +206,10 @@ export default function DetalheReserva() {
         {/* ===== INFORMAÇÕES ===== */}
         <div className="grid-info">
           <div>
-            <strong>Data Solicitação:</strong>
+            <strong>Solicitante:</strong>{reserva.usuarioSolicitanteNome}
+          </div>
+          <div>
+            <strong>Data Reserva:</strong>
             {new Date(reserva.dataCriacao).toLocaleDateString("pt-BR")}
           </div>
           <div>
@@ -222,13 +228,15 @@ export default function DetalheReserva() {
               currency: "BRL",
             })}
           </div>
-          <div>
-            <strong>Valor Real:</strong>{" "}
-            {reserva.valorReal.toLocaleString("pt-BR", {
-              style: "currency",
-              currency: "BRL",
-            })}
-          </div>
+          {reserva.valorReal > 0 && (
+            <div>
+              <strong>Valor Real:</strong>{" "}
+              {reserva.valorReal.toLocaleString("pt-BR", {
+                style: "currency",
+                currency: "BRL",
+              })}
+            </div>
+          )}
           <div>
             <strong>Centro De Custo:</strong> {reserva.centroDeCusto}
           </div>
@@ -238,28 +246,43 @@ export default function DetalheReserva() {
           <div>
             <strong>Telefone:</strong> {reserva.telefoneAnfitriao}
           </div>
-          <div className="container-link-imovel">
+          {reserva.codigoReserva && (
+            <div>
+              <strong>Código Reserva:</strong> {reserva.codigoReserva}
+            </div>
+          )}
+          <div>
+            <strong>Link Imóvel:</strong>
             <a
               href={reserva.linkImovel}
               target="_blank"
               rel="noopener noreferrer"
               className="link-imovel"
             >
-              Ver imóvel <FaExternalLinkAlt size={12} />
+              Clique Aqui <FaExternalLinkAlt size={12} />
             </a>
-          </div>
-          <div>
-            <strong>Código Reserva:</strong> {reserva.codigoReserva}
           </div>
         </div>
 
-        {/* ===== MOTIVO ===== */}
         <div className="motivo">
           <strong>Motivo:</strong>
           <p>{reserva.motivo}</p>
         </div>
 
-        {/* ===== RECIBOS ===== */}
+        {reserva.observacaoAprovador && (
+          <div className="motivo">
+            <strong>Observação Aprovador:</strong>
+            <p>{reserva.observacaoAprovador}</p>
+          </div>
+        )}
+
+        {reserva.observacaoExecutor && (
+          <div className="motivo">
+            <strong>Observação Executor:</strong>
+            <p>{reserva.observacaoExecutor}</p>
+          </div>
+        )}        
+
         <div className="recibos-section">
           <h3>Recibos Anexados</h3>
           {recibos.length === 0 ? (
@@ -332,7 +355,6 @@ export default function DetalheReserva() {
           )}
         </div>
 
-        {/* ===== BOTÕES FLUTUANTES ===== */}
         {isAprovavel && (
           <div className="floating-actions-vertical">
             <button
@@ -358,7 +380,11 @@ export default function DetalheReserva() {
               <span className="label">Reprovar</span>
               <FaTimes className="icon" />
             </button>
+          </div>
+        )}
 
+        {exibeInclusaoRecibo && (
+          <div className="floating-actions-vertical">
             <button
               className="floating-btn btn-recibo"
               onClick={() => setShowModalInclusaoRecibo(true)}
