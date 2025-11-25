@@ -182,7 +182,7 @@ export default function DashboardReservas() {
           value={filtros.cidade}
           onChange={handleFiltroChange}
         >
-          <option value="">Todos Cidades</option>
+          <option value="">Todas Cidades</option>
           {cidades.map((c) => (
             <option key={c} value={c}>
               {c}
