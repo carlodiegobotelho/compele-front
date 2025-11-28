@@ -235,9 +235,10 @@ export default function DashboardReservas() {
                   .map((item) => {
                     const colorMap = {
                       Pendente: "#facc15",   // 🟡
-                      Aprovado: "#3b82f6",   // 🔵
+                      ConcluidaParcialmente: "#facc15",   // 🟡
                       Reprovado: "#ef4444",  // 🔴
-                      Cancelado: "#8b5cf6",  // 🟣
+                      Cancelado: "#ef4444",  // 🔴
+                      Aprovado: "#22c55e",  // 🟢
                       Concluida: "#22c55e",  // 🟢
                     };
                     return (

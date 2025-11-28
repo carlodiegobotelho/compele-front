@@ -133,6 +133,8 @@ export default function MinhasSolicitacoes() {
                     <option value="2">Aprovado</option>
                     <option value="3">Reprovado</option>
                     <option value="4">Cancelado</option>
+                    <option value="5">Concluída Parcialmente</option>
+                    <option value="6">Concluída</option>
                 </select>
                 </div>
 
