@@ -10,7 +10,7 @@ export default function MinhasSolicitacoes() {
   const dataInicio = new Date();
   dataInicio.setDate(dataInicio.getDate() - 30);
   const dataFim = new Date();
-  dataFim.setDate(dataFim.getDate());
+  dataFim.setDate(dataFim.getDate() + 1);
 
   const dataInicioFormatada = dataInicio.toISOString().split("T")[0];
   const dataFimFormatada = dataFim.toISOString().split("T")[0];
@@ -61,8 +61,12 @@ export default function MinhasSolicitacoes() {
   const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
       case "pendente":
+      case "concluidoparcialmente":
+      case "concluído parcialmente":
         return "status-pendente";
       case "aprovado":
+      case "concluido":
+      case "concluído":
         return "status-aprovado";
       case "reprovado":
       case "cancelado":
