@@ -8,9 +8,9 @@ import "../styles/MinhasSolicitacoes.css";
 export default function MinhasSolicitacoes() {
   const navigate = useNavigate();
   const dataInicio = new Date();
-  dataInicio.setDate(dataInicio.getDate() - 10);
+  dataInicio.setDate(dataInicio.getDate() - 30);
   const dataFim = new Date();
-  dataFim.setDate(dataFim.getDate() + 5);
+  dataFim.setDate(dataFim.getDate());
 
   const dataInicioFormatada = dataInicio.toISOString().split("T")[0];
   const dataFimFormatada = dataFim.toISOString().split("T")[0];
