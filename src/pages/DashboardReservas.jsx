@@ -3,39 +3,31 @@ import PageHeader from "../components/PageHeader";
 import {
   FaClipboardList,
   FaMoneyBillWave,
-  FaChartLine,
   FaCalendarDay,
   FaSearch,
-  FaInfoCircle,
-  FaEye,
-  FaEyeSlash 
 } from "react-icons/fa";
 import {
-  LineChart,
-  Line,
+  PieChart,
+  Pie,
+  Cell,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  BarChart,
-  Bar,
-  Cell,
 } from "recharts";
 import api from "../services/api";
 import "../styles/DashboardReservas.css";
 
 export default function DashboardReservas() {
-  const [activeMetric, setActiveMetric] = useState("quantidade");
   const [resumo, setResumo] = useState(null);
-  const [historico, setHistorico] = useState(null);
   const [colaboradores, setColaboradores] = useState([]);
   const [centroDeCusto, setCentroDeCusto] = useState([]);
   const [cidades, setCidades] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [showValoresRealizados, setShowValoresRealizados] = useState(false);
-  const [showValoresComTaxa, setShowValoresComTaxa] = useState(true);
-  const [showValoresMediosPorDiaria, setShowValoresMediosPorDiaria] = useState(true);
+  const [activeStatusIndex, setActiveStatusIndex] = useState(0);
 
   const [filtros, setFiltros] = useState({
     colaborador: "",
@@ -49,21 +41,7 @@ export default function DashboardReservas() {
     setFiltros({ ...filtros, [e.target.name]: e.target.value });
   };
 
-  const handleCardClick = async (metric) => {
-    setActiveMetric(metric);
-    setHistorico(
-      metric === "quantidade"
-        ? resumo?.historicoQuantidade
-        : metric === "valorRealizado"
-        ? resumo?.historicoValorRealizado
-        : metric === "valorComTaxa"
-        ? resumo?.historicoValorComTaxa
-        : resumo?.historicoValorMedio
-    );
-  };
-
   const carregarDashboard = async () => {
-    const metric = activeMetric;
     try {
       setLoading(true);
       const response = await api.get("/api/reservas/dashboard", {
@@ -73,19 +51,9 @@ export default function DashboardReservas() {
           cidade: filtros.cidade || null,
           dataInicio: filtros.dataInicio || null,
           dataFim: filtros.dataFim || null,
-          entidade: metric,
         },
       });
       setResumo(response.data);
-      setHistorico(
-        metric === "quantidade"
-          ? response.data.historicoQuantidade
-          : metric === "valorRealizado"
-          ? response.data.historicoValorRealizado
-          : metric === "valorComTaxa"
-          ? response.data.historicoValorComTaxa
-          : response.data.historicoValorMedio
-      );
     } catch (err) {
       console.error("Erro ao carregar dashboard:", err);
     } finally {
@@ -134,12 +102,19 @@ export default function DashboardReservas() {
       minimumFractionDigits: 2,
     });
 
-  const coresStatus = {
+  // Dados para gráficos
+  const dadosStatus = resumo?.agrupadoPorStatus || [];
+  const dadosCidades = (resumo?.agrupadoPorCidade || []).slice(0, 5);
+  const dadosMeses = (resumo?.agrupadoPorMes || []).slice(-5);
+
+  // Cores por status no gráfico de pizza
+  const statusColors = {
     Pendente: "#facc15",
-    Aprovado: "#3b82f6",
+    "Concluído Parcialmente": "#f97316",
+    Concluído: "#22c55e",
+    Aprovado: "#22c55e",
     Reprovado: "#ef4444",
-    Cancelado: "#8b5cf6",
-    Concluida: "#22c55e",
+    Cancelado: "#6b21a8",
   };
 
   return (
@@ -164,6 +139,20 @@ export default function DashboardReservas() {
 
         <select
           style={{ width: 200 }}
+          name="cidade"
+          value={filtros.cidade}
+          onChange={handleFiltroChange}
+        >
+          <option value="">Todas Cidades</option>
+          {cidades.map((c) => (
+            <option key={c} value={c}>
+              {c}
+            </option>
+          ))}
+        </select>
+
+        <select
+          style={{ width: 200 }}
           name="centroCusto"
           value={filtros.centroCusto}
           onChange={handleFiltroChange}
@@ -176,29 +165,15 @@ export default function DashboardReservas() {
           ))}
         </select>
 
-        <select
-          style={{ width: 200 }}
-          name="cidade"
-          value={filtros.cidade}
-          onChange={handleFiltroChange}
-        >
-          <option value="">Todas Cidades</option>
-          {cidades.map((c) => (
-            <option key={c} value={c}>
-              {c}
-            </option>
-          ))}
-        </select>        
-
         <input
-          style={{ width: 120, minWidth: 120 }}        
+          style={{ width: 120, minWidth: 120 }}
           type="date"
           name="dataInicio"
           value={filtros.dataInicio}
           onChange={handleFiltroChange}
         />
         <input
-          style={{ width: 120, minWidth: 120 }}      
+          style={{ width: 120, minWidth: 120 }}
           type="date"
           name="dataFim"
           value={filtros.dataFim}
@@ -210,165 +185,184 @@ export default function DashboardReservas() {
           className="btn-buscar-dashboard"
           disabled={loading}
         >
-          {loading ? <span className="spinner" /> : <><FaSearch /> <span>Buscar</span></>}
+          {loading ? (
+            <span className="spinner" />
+          ) : (
+            <>
+              <FaSearch /> <span>Buscar</span>
+            </>
+          )}
         </button>
       </div>
 
       {/* === CARDS PRINCIPAIS === */}
       {resumo && (
         <div className="cards-container">
-          {/* === QUANTIDADE DE RESERVAS === */}
-          <div
-            className={`card-quantidade-reservas card kpi ${activeMetric === "quantidade" ? "active" : ""}`}
-            onClick={() => handleCardClick("quantidade")}
-          >
-            <FaInfoCircle className="info-icon-dash-card" />
+          {/* Quantidade de Reservas */}
+          <div className="card kpi">
             <FaClipboardList />
             <div className="card-content">
-              <strong>{resumo.quantidade}</strong>
-              <span>Número de Reservas</span>
-
-              {resumo.contador && resumo.contador.length > 0 && (
-                <div className="status-tooltip">
-                  {resumo.contador
-                  .filter((item) => { return item.quantidade > 0 })
-                  .map((item) => {
-                    const colorMap = {
-                      Pendente: "#facc15",   // 🟡
-                      ConcluidaParcialmente: "#facc15",   // 🟡
-                      Reprovado: "#ef4444",  // 🔴
-                      Cancelado: "#ef4444",  // 🔴
-                      Aprovado: "#22c55e",  // 🟢
-                      Concluida: "#22c55e",  // 🟢
-                    };
-                    return (
-                      <div key={item.label} className="status-item">
-                        <span
-                          className="status-dot"
-                          style={{ backgroundColor: colorMap[item.label] || "#9ca3af" }}
-                        ></span>
-                        <span className="status-label">
-                          {item.label}: {item.quantidade}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
+              <strong>{resumo.quantidade ?? 0}</strong>
+              <span>Quantidade de Reservas</span>
             </div>
           </div>
 
-
-          <div
-            className={`card kpi ${activeMetric === "valorRealizado" ? "active" : ""}`}
-            onClick={() => handleCardClick("valorRealizado")}
-          >
-            <div 
-              onClick={(e) => {
-                e.stopPropagation();
-                setShowValoresRealizados(!showValoresRealizados);
-              }}>
-              {showValoresRealizados ? <FaEye className="info-icon-dash-card" /> : <FaEyeSlash className="info-icon-dash-card" />}
-            </div>
+          {/* Valor Total */}
+          <div className="card kpi">
             <FaMoneyBillWave />
-            <div>
-              <strong>
-                {showValoresRealizados
-                  ? formatCurrency(resumo.valorRealizado)
-                  : "••••••"}
-              </strong>
-              <span>Valor Realizado</span>
+            <div className="card-content">
+              <strong>{formatCurrency(resumo.valorTotal ?? 0)}</strong>
+              <span>Valor Total</span>
             </div>
           </div>
 
-          <div
-            className={`card kpi ${activeMetric === "valorComTaxa" ? "active" : ""}`}
-            onClick={() => handleCardClick("valorComTaxa")}
-          >
-            <div 
-              onClick={(e) => {
-                e.stopPropagation();
-                setShowValoresComTaxa(!showValoresComTaxa);
-              }}>
-              {showValoresComTaxa ? <FaEye className="info-icon-dash-card" /> : <FaEyeSlash className="info-icon-dash-card" />}
-            </div>
-            <FaMoneyBillWave />
-            <div>
-              <strong>
-                {showValoresComTaxa
-                  ? formatCurrency(resumo.valorComTaxa)
-                  : "••••••"}
-              </strong>
-              <span>Valor com Taxa</span>
-            </div>
-          </div>
-
-          <div
-            className={`card kpi ${activeMetric === "valorMedioPorDiaria" ? "active" : ""}`}
-            onClick={() => handleCardClick("valorMedioPorDiaria")}
-          >
-            <div 
-              onClick={(e) => {
-                e.stopPropagation();
-                setShowValoresMediosPorDiaria(!showValoresMediosPorDiaria);
-              }}>
-              {showValoresMediosPorDiaria ? <FaEye className="info-icon-dash-card" /> : <FaEyeSlash className="info-icon-dash-card" />}
-            </div>
+          {/* Valor Médio / Diária */}
+          <div className="card kpi">
             <FaCalendarDay />
-            <div>
-              <strong>
-                {showValoresMediosPorDiaria
-                  ? formatCurrency(resumo.valorMedioPorDiaria)
-                  : "••••••"}
-              </strong>
+            <div className="card-content">
+              <strong>{formatCurrency(resumo.valorMedioPorDiaria ?? 0)}</strong>
               <span>Valor Médio / Diária</span>
             </div>
           </div>
         </div>
       )}
 
-      {/* === GRÁFICO DE LINHA === */}
-      {historico && (
-        <div className="grafico-container">
-          <h3>
-            Histórico de{" "}
-            {activeMetric === "quantidade"
-              ? "Reservas"
-              : activeMetric === "valorRealizado"
-              ? "Valor Realizado"
-              : activeMetric === "valorComTaxa"
-              ? "Valor com Taxa"
-              : "Valor Médio por Diária"}
-          </h3>
+      {/* === GRÁFICOS === */}
+      {resumo && (
+        <div className="charts-row">
 
-          <ResponsiveContainer width="100%" height={320}>
-            <LineChart data={historico}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="periodo" />
-              <YAxis />
-              <Tooltip
-                formatter={(v) =>
-                  activeMetric === "quantidade" ? v : formatCurrency(v)
-                }
-              />
-              <Line
-                type="monotone"
-                dataKey="valor"
-                stroke={
-                  activeMetric === "quantidade"
-                    ? "#3b82f6"
-                    : activeMetric === "valorRealizado"
-                    ? "#22c55e"
-                    : activeMetric === "valorComTaxa"
-                    ? "#8b5cf6"
-                    : "#f59e0b"
-                }
-                strokeWidth={3}
-                dot={{ r: 5 }}
-                activeDot={{ r: 7 }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
+
+{/* Pizza por Status */}
+<div className="chart-card">
+  <h3>Reservas por Status</h3>
+
+  {/* Gráfico centralizado */}
+  <div className="chart-graph chart-graph-center">
+    <ResponsiveContainer width="100%" height={220}>
+      <PieChart>
+        <Pie
+          data={dadosStatus}
+          dataKey="quantidade"
+          nameKey="label"
+          innerRadius={40}
+          outerRadius={90}
+          paddingAngle={3}
+          activeIndex={activeStatusIndex}
+          onClick={(_, index) => {
+            // se clicar de novo na mesma fatia, desmarca
+            setActiveStatusIndex(index === activeStatusIndex ? null : index);
+          }}
+        >
+          {dadosStatus.map((entry, index) => (
+            <Cell
+              key={`cell-${index}`}
+              fill={
+                statusColors[entry.label] ||
+                ["#3b82f6", "#22c55e", "#f97316", "#ef4444", "#6b21a8"][
+                  index % 5
+                ]
+              }
+              style={{ cursor: "pointer" }}
+            />
+          ))}
+        </Pie>
+        <Tooltip
+          formatter={(value, name, props) => [
+            `${value}`,
+            props.payload.label,
+          ]}
+        />
+      </PieChart>
+    </ResponsiveContainer>
+  </div>
+
+  {/* Legenda embaixo, ocupando menos espaço */}
+  <div className="chart-legend chart-legend-horizontal">
+    {dadosStatus.map((item, idx) => (
+      <div
+        key={idx}
+        className={`legend-item ${
+          activeStatusIndex === idx ? "legend-item-active" : ""
+        }`}
+        onClick={() =>
+          setActiveStatusIndex(activeStatusIndex === idx ? null : idx)
+        }
+      >
+        <span
+          className="legend-dot"
+          style={{
+            backgroundColor:
+              statusColors[item.label] ||
+              ["#3b82f6", "#22c55e", "#f97316", "#ef4444", "#6b21a8"][
+                idx % 5
+              ],
+          }}
+        />
+        <span className="legend-label">
+          {item.label} ({item.quantidade})
+        </span>
+      </div>
+    ))}
+  </div>
+</div>
+
+
+
+          {/* Barras horizontais - Cidades */}
+          <div className="chart-card">
+            <h3>Top 5 Cidades com Reservas</h3>
+            <div className="chart-graph">
+              <ResponsiveContainer width="100%" height={260}>
+                <BarChart
+                  data={dadosCidades}
+                  margin={{ top: 20, right: 5, left: 5, bottom: 20 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis
+                    dataKey="label"
+                    tick={{ fontSize: 9 }}
+                    angle={-40}
+                    textAnchor="end"
+                    height={50}
+                    width={60}
+                  />
+                  <YAxis tick={{ fontSize: 9 }} />
+                  <Tooltip
+                    formatter={(value) => formatCurrency(value)}
+                  />
+                  <Bar dataKey="valor" radius={[8, 8, 8, 8]} fill="#3b82f6" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* Barras verticais - Últimos 5 meses */}
+          <div className="chart-card">
+            <h3>Gastos nos últimos 5 meses</h3>
+            <div className="chart-graph">
+              <ResponsiveContainer width="100%" height={260}>
+                <BarChart
+                  data={dadosMeses}
+                  margin={{ top: 20, right: 5, left: 5, bottom: 20 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis
+                    dataKey="label"
+                    tick={{ fontSize: 9 }}
+                    angle={-40}
+                    textAnchor="end"
+                    height={50}
+                    width={60}
+                  />
+                  <YAxis tick={{ fontSize: 10 }} />
+                  <Tooltip
+                    formatter={(value) => formatCurrency(value)}
+                  />
+                  <Bar dataKey="valor" radius={[8, 8, 0, 0]} fill="#22c55e" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
         </div>
       )}
     </div>
