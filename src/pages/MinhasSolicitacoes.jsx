@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import api from "../services/api";
-import { FaInfoCircle, FaSearch, FaEye } from "react-icons/fa";
+import { FaInfoCircle, FaSearch, FaEye, FaFileExcel } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom'
 import PageHeader from "../components/PageHeader";
 import "../styles/MinhasSolicitacoes.css";
@@ -8,7 +8,7 @@ import "../styles/MinhasSolicitacoes.css";
 export default function MinhasSolicitacoes() {
   const navigate = useNavigate();
   const dataInicio = new Date();
-  dataInicio.setDate(dataInicio.getDate() - 30);
+  dataInicio.setDate(dataInicio.getDate() - 60);
   const dataFim = new Date();
   dataFim.setDate(dataFim.getDate() + 1);
 
@@ -19,11 +19,20 @@ export default function MinhasSolicitacoes() {
     dataCriacaoInicio: dataInicioFormatada,
     dataCriacaoFim: dataFimFormatada,
     status: "0",
+    colaborador: null,
+    cidade: null,
+    centroDeCusto: null,
+    dataReservaInicio: null,
+    dataReservaFim: null,
   });
 
   const [solicitacoes, setSolicitacoes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
+  const [colaboradores, setColaboradores] = useState([]);
+  const [centroDeCusto, setCentroDeCusto] = useState([]);
+  const [cidades, setCidades] = useState([]);
+  const [linkExportar, setLinkExportar] = useState("");
 
   const handleSort = (key) => {
     let direction = "asc";
@@ -33,9 +42,38 @@ export default function MinhasSolicitacoes() {
     setSortConfig({ key, direction });
   };
 
+  const carregarColaboradores = async () => {
+    try {
+      const response = await api.get("/api/cadastros/colaboradores");
+      if (Array.isArray(response.data)) setColaboradores(response.data);
+    } catch (err) {
+      console.error("Erro ao carregar colaboradores:", err);
+    }
+  };
+
+  const carregarCidades = async () => {
+    try {
+      const response = await api.get("/api/cadastros/cidades");
+      if (Array.isArray(response.data)) setCidades(response.data);
+    } catch (err) {
+      console.error("Erro ao carregar as cidades:", err);
+    }
+  };
+
+  const carregarCentroDeCusto = async () => {
+    try {
+      const response = await api.get("/api/cadastros/centro-de-custo");
+      if (Array.isArray(response.data)) setCentroDeCusto(response.data);
+    } catch (err) {
+      console.error("Erro ao carregar centro de custo:", err);
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFiltro({ ...filtro, [name]: value });
+    const exportUrl = getExportUrl(filtro);
+    setLinkExportar(exportUrl);
   };
 
   const handleBuscar = async (e) => {
@@ -43,19 +81,27 @@ export default function MinhasSolicitacoes() {
     setLoading(true);
     try {
       const response = await api.get("/api/reservas/minhas-solicitacoes", {
-            params: {
-                dataCriacaoInicio: filtro.dataCriacaoInicio,
-                dataCriacaoFim: filtro.dataCriacaoFim,
-                status: filtro.status
-            }
+            params: filtro
         });
       setSolicitacoes(response.data);
+      const exportUrl = getExportUrl(filtro);
+      setLinkExportar(exportUrl);
     } catch (err) {
       console.error(err);
       setSolicitacoes([]);
     } finally {
       setLoading(false);
     }
+  };
+
+  const getExportUrl = (filtros) => {
+    const params = new URLSearchParams(
+      Object.fromEntries(
+        Object.entries(filtros).filter(([_, v]) => v !== "" && v !== null && v !== undefined)
+      )
+    ).toString();
+
+    return `https://compele.online/compele-api/api/reservas/exportar-minhas-solicitacoes${params ? `?${params}` : ""}`;
   };
 
   const getStatusColor = (status) => {
@@ -95,8 +141,13 @@ export default function MinhasSolicitacoes() {
     }
   });
 
+  
+
   useEffect(() => {
     handleBuscar();
+    carregarColaboradores();
+    carregarCidades();
+    carregarCentroDeCusto();
     setSortConfig({ key: 'dataCriacao', direction: 'desc' });
   }, []);
 
@@ -105,42 +156,118 @@ export default function MinhasSolicitacoes() {
       <PageHeader title="Relatório de Reservas">
         <form onSubmit={handleBuscar}>
             <div className="filtro-inline">
-                <div className="filtro-group">
-                <label>Data Criação Início</label>
-                <input
-                    type="date"
-                    name="dataCriacaoInicio"
-                    value={filtro.dataCriacaoInicio}
-                    onChange={handleChange}
-                />
+
+                <div className="filtro-group relatorio">
+                  <label>Colaborador</label>
+                  <select
+                      style={{ width: 200 }}
+                      name="colaborador"
+                      value={filtro.colaborador}
+                      onChange={handleChange}
+                    >
+                      <option value="">Todos Colaboradores</option>
+                      {colaboradores.map((c) => (
+                        <option key={c.id} value={c.id}>
+                          {c.nome}
+                        </option>
+                      ))}
+                    </select>
                 </div>
 
-                <div className="filtro-group">
-                <label>Data Criação Fim</label>
-                <input
-                    type="date"
-                    name="dataCriacaoFim"
-                    value={filtro.dataCriacaoFim}
-                    onChange={handleChange}
-                />
+                <div className="filtro-group relatorio">
+                  <label>Cidade</label>
+                  <select
+                      style={{ width: 200 }}
+                      name="cidade"
+                      value={filtro.cidade}
+                      onChange={handleChange}
+                    >
+                      <option value="">Todas Cidades</option>
+                      {cidades.map((c) => (
+                        <option key={c} value={c}>
+                          {c}
+                        </option>
+                      ))}
+                    </select>
                 </div>
 
-                <div className="filtro-group">
-                <label>Status</label>
-                <select name="status" value={filtro.status} onChange={handleChange}>
-                    <option value="0">Todos</option>
-                    <option value="1">Pendente</option>
-                    <option value="2">Aprovado</option>
-                    <option value="3">Reprovado</option>
-                    <option value="4">Cancelado</option>
-                    <option value="5">Concluída Parcialmente</option>
-                    <option value="6">Concluída</option>
-                </select>
+                <div className="filtro-group relatorio">
+                  <label>Centro de Custo</label>
+                  <select
+                      style={{ width: 200 }}
+                      name="centroDeCusto"
+                      value={filtro.centroDeCusto}
+                      onChange={handleChange}
+                    >
+                      <option value="">Todos</option>
+                      {centroDeCusto.map((c) => (
+                        <option key={c} value={c}>
+                          {c}
+                        </option>
+                      ))}
+                    </select>
+                </div>
+
+                <div className="filtro-group relatorio">
+                  <label>Status</label>
+                  <select name="status" value={filtro.status} onChange={handleChange}>
+                      <option value="0">Todos</option>
+                      <option value="1">Pendente</option>
+                      <option value="2">Aprovado</option>
+                      <option value="3">Reprovado</option>
+                      <option value="4">Cancelado</option>
+                      <option value="5">Concluída Parcialmente</option>
+                      <option value="6">Concluída</option>
+                  </select>
                 </div>
 
                 <button type="submit" className="btn-buscar">
-                <FaSearch /> Buscar
+                  <FaSearch /> Buscar
                 </button>
+
+                <div className="filtro-group relatorio">
+                  <label>Data Criação Início</label>
+                  <input
+                      type="date"
+                      name="dataCriacaoInicio"
+                      value={filtro.dataCriacaoInicio}
+                      onChange={handleChange}
+                  />
+                </div>
+
+                <div className="filtro-group relatorio">
+                  <label>Data Criação Fim</label>
+                  <input
+                      type="date"
+                      name="dataCriacaoFim"
+                      value={filtro.dataCriacaoFim}
+                      onChange={handleChange}
+                  />
+                </div>
+
+                <div className="filtro-group relatorio">
+                  <label>Data Estadia Início</label>
+                  <input
+                      type="date"
+                      name="dataReservaInicio"
+                      value={filtro.dataReservaInicio}
+                      onChange={handleChange}
+                  />
+                </div>
+
+                <div className="filtro-group relatorio">
+                  <label>Data Estadia Fim</label>
+                  <input
+                      type="date"
+                      name="dataReservaFim"
+                      value={filtro.dataReservaFim}
+                      onChange={handleChange}
+                  />
+                </div>
+
+                <a  href={linkExportar} target="blank" className="btn-buscar excel">
+                  <FaFileExcel /> Exportar
+                </a>                
             </div>
         </form>
       </PageHeader>
@@ -160,6 +287,8 @@ export default function MinhasSolicitacoes() {
                 { key: "dataInicio", label: "Início" },
                 { key: "dataFim", label: "Fim" },
                 { key: "cidade", label: "Cidade" },
+                { key: "valorImovel", label: "Valor Imovel" },
+                { key: "valorComTaxa", label: "Valor Total" },
                 { key: "status", label: "Status" },
                 ].map((col) => (
                 <th
@@ -171,8 +300,8 @@ export default function MinhasSolicitacoes() {
                 >{col.label}
                 </th>
                 ))}
-                <th>Motivo</th>
-                <th>Ação</th>
+                <th></th>
+                <th></th>
             </tr>
             </thead>
             <tbody>
@@ -191,6 +320,14 @@ export default function MinhasSolicitacoes() {
                   <td>{new Date(s.dataInicio).toLocaleDateString()}</td>
                   <td>{new Date(s.dataFim).toLocaleDateString()}</td>
                   <td>{s.cidade}</td>
+                  <td>{s.valorImovel.toLocaleString("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}</td>
+                  <td>{s.valorComTaxa.toLocaleString("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}</td>
                   <td>
                     <span className={`status-chip ${getStatusColor(s.status)}`}>
                       {s.status}
@@ -206,7 +343,7 @@ export default function MinhasSolicitacoes() {
                     <button
                       className="btn-detalhar"
                       onClick={() => navigate(`/reserva/${s.id}`, { state: { fromList: true } })}>
-                      <FaEye /> Detalhar
+                      <FaEye />
                     </button>
                   </td>
                 </tr>

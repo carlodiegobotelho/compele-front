@@ -55,6 +55,10 @@ th.sorted-desc::after {
   flex-direction: column;
 }
 
+.filtro-group.relatorio {
+  min-width: 200px!important;
+}
+ 
 .filtro-group label {
   font-weight: 600;
   font-size: 0.85rem;
@@ -68,7 +72,6 @@ th.sorted-desc::after {
   border-radius: 6px;
   padding: 8px 10px;
   font-size: 14px;
-  width: 170px;
   background: #fff;
   margin-bottom: 0px!important;
 }
@@ -88,8 +91,16 @@ th.sorted-desc::after {
   margin-top: 20px;
 }
 
+.btn-buscar.excel {
+  background-color: #0aad25;
+}
+
 .btn-buscar:hover {
   background-color: #1e4ed8;
+}
+
+.btn-buscar.excel:hover {
+  background-color: #08801c;
 }
 
 /* ---------- TABELA ---------- */
