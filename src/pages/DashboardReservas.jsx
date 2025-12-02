@@ -232,85 +232,85 @@ export default function DashboardReservas() {
         <div className="charts-row">
 
 
-{/* Pizza por Status */}
-<div className="chart-card">
-  <h3>Reservas por Status</h3>
+    {/* Pizza por Status */}
+    <div className="chart-card">
+      <h3>Reservas</h3>
 
-  {/* Gráfico centralizado */}
-  <div className="chart-graph chart-graph-center">
-    <ResponsiveContainer width="100%" height={220}>
-      <PieChart>
-        <Pie
-          data={dadosStatus}
-          dataKey="quantidade"
-          nameKey="label"
-          innerRadius={40}
-          outerRadius={90}
-          paddingAngle={3}
-          activeIndex={activeStatusIndex}
-          onClick={(_, index) => {
-            // se clicar de novo na mesma fatia, desmarca
-            setActiveStatusIndex(index === activeStatusIndex ? null : index);
-          }}
-        >
-          {dadosStatus.map((entry, index) => (
-            <Cell
-              key={`cell-${index}`}
-              fill={
-                statusColors[entry.label] ||
-                ["#3b82f6", "#22c55e", "#f97316", "#ef4444", "#6b21a8"][
-                  index % 5
-                ]
-              }
-              style={{ cursor: "pointer" }}
+      {/* Gráfico centralizado */}
+      <div className="chart-graph chart-graph-center">
+        <ResponsiveContainer width="100%" height={220}>
+          <PieChart>
+            <Pie
+              data={dadosStatus}
+              dataKey="quantidade"
+              nameKey="label"
+              innerRadius={40}
+              outerRadius={90}
+              paddingAngle={3}
+              activeIndex={activeStatusIndex}
+              onClick={(_, index) => {
+                // se clicar de novo na mesma fatia, desmarca
+                setActiveStatusIndex(index === activeStatusIndex ? null : index);
+              }}
+            >
+              {dadosStatus.map((entry, index) => (
+                <Cell
+                  key={`cell-${index}`}
+                  fill={
+                    statusColors[entry.label] ||
+                    ["#3b82f6", "#22c55e", "#f97316", "#ef4444", "#6b21a8"][
+                      index % 5
+                    ]
+                  }
+                  style={{ cursor: "pointer" }}
+                />
+              ))}
+            </Pie>
+            <Tooltip
+              formatter={(value, name, props) => [
+                `${value}`,
+                props.payload.label,
+              ]}
             />
-          ))}
-        </Pie>
-        <Tooltip
-          formatter={(value, name, props) => [
-            `${value}`,
-            props.payload.label,
-          ]}
-        />
-      </PieChart>
-    </ResponsiveContainer>
-  </div>
-
-  {/* Legenda embaixo, ocupando menos espaço */}
-  <div className="chart-legend chart-legend-horizontal">
-    {dadosStatus.map((item, idx) => (
-      <div
-        key={idx}
-        className={`legend-item ${
-          activeStatusIndex === idx ? "legend-item-active" : ""
-        }`}
-        onClick={() =>
-          setActiveStatusIndex(activeStatusIndex === idx ? null : idx)
-        }
-      >
-        <span
-          className="legend-dot"
-          style={{
-            backgroundColor:
-              statusColors[item.label] ||
-              ["#3b82f6", "#22c55e", "#f97316", "#ef4444", "#6b21a8"][
-                idx % 5
-              ],
-          }}
-        />
-        <span className="legend-label">
-          {item.label} ({item.quantidade})
-        </span>
+          </PieChart>
+        </ResponsiveContainer>
       </div>
-    ))}
-  </div>
-</div>
+
+      {/* Legenda embaixo, ocupando menos espaço */}
+      <div className="chart-legend chart-legend-horizontal">
+        {dadosStatus.map((item, idx) => (
+          <div
+            key={idx}
+            className={`legend-item ${
+              activeStatusIndex === idx ? "legend-item-active" : ""
+            }`}
+            onClick={() =>
+              setActiveStatusIndex(activeStatusIndex === idx ? null : idx)
+            }
+          >
+            <span
+              className="legend-dot"
+              style={{
+                backgroundColor:
+                  statusColors[item.label] ||
+                  ["#3b82f6", "#22c55e", "#f97316", "#ef4444", "#6b21a8"][
+                    idx % 5
+                  ],
+              }}
+            />
+            <span className="legend-label">
+              {item.label} ({item.quantidade})
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
 
 
 
           {/* Barras horizontais - Cidades */}
           <div className="chart-card">
-            <h3>Top 5 Cidades com Reservas</h3>
+            <h3>Top 5 Cidades por Gastos</h3>
             <div className="chart-graph">
               <ResponsiveContainer width="100%" height={260}>
                 <BarChart
@@ -338,7 +338,7 @@ export default function DashboardReservas() {
 
           {/* Barras verticais - Últimos 5 meses */}
           <div className="chart-card">
-            <h3>Gastos nos últimos 5 meses</h3>
+            <h3>Despesas – Últimos 5 Meses</h3>
             <div className="chart-graph">
               <ResponsiveContainer width="100%" height={260}>
                 <BarChart
