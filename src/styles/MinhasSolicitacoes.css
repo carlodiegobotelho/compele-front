@@ -56,7 +56,7 @@ th.sorted-desc::after {
 }
 
 .filtro-group.relatorio {
-  min-width: 200px!important;
+  min-width: 190px!important;
 }
  
 .filtro-group label {
@@ -88,10 +88,13 @@ th.sorted-desc::after {
   gap: 6px;
   cursor: pointer;
   transition: 0.2s;
-  margin-top: 20px;
+  width: 190px!important;
+  text-align: center;
+  margin: 0 auto;
 }
 
 .btn-buscar.excel {
+  width: 190px!important;
   background-color: #0aad25;
 }
 
@@ -226,10 +229,5 @@ th.sorted-desc::after {
   .filtro-group input,
   .filtro-group select {
     width: 100%;
-  }
-
-  .btn-buscar {
-    width: 100%;
-    justify-content: center;
   }
 }

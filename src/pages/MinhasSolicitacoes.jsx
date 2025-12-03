@@ -4,6 +4,7 @@ import { FaInfoCircle, FaSearch, FaEye, FaFileExcel } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom'
 import PageHeader from "../components/PageHeader";
 import "../styles/MinhasSolicitacoes.css";
+import { TextAlignCenter } from "lucide-react";
 
 export default function MinhasSolicitacoes() {
   const navigate = useNavigate();
@@ -101,7 +102,7 @@ export default function MinhasSolicitacoes() {
       )
     ).toString();
 
-    return `https://compele.online/compele-api/api/reservas/exportar-minhas-solicitacoes${params ? `?${params}` : ""}`;
+    return `https://compeleservice.com/compele-api/api/reservas/exportar-minhas-solicitacoes${params ? `?${params}` : ""}`;
   };
 
   const getStatusColor = (status) => {
@@ -141,7 +142,9 @@ export default function MinhasSolicitacoes() {
     }
   });
 
-  
+  const exportar = (link) => {
+    window.open(link, '_blank');
+  };
 
   useEffect(() => {
     handleBuscar();
@@ -160,7 +163,7 @@ export default function MinhasSolicitacoes() {
                 <div className="filtro-group relatorio">
                   <label>Colaborador</label>
                   <select
-                      style={{ width: 200 }}
+                      style={{ width: 190 }}
                       name="colaborador"
                       value={filtro.colaborador}
                       onChange={handleChange}
@@ -177,7 +180,7 @@ export default function MinhasSolicitacoes() {
                 <div className="filtro-group relatorio">
                   <label>Cidade</label>
                   <select
-                      style={{ width: 200 }}
+                      style={{ width: 190 }}
                       name="cidade"
                       value={filtro.cidade}
                       onChange={handleChange}
@@ -194,7 +197,7 @@ export default function MinhasSolicitacoes() {
                 <div className="filtro-group relatorio">
                   <label>Centro de Custo</label>
                   <select
-                      style={{ width: 200 }}
+                      style={{ width: 190 }}
                       name="centroDeCusto"
                       value={filtro.centroDeCusto}
                       onChange={handleChange}
@@ -220,10 +223,6 @@ export default function MinhasSolicitacoes() {
                       <option value="6">Concluída</option>
                   </select>
                 </div>
-
-                <button type="submit" className="btn-buscar">
-                  <FaSearch /> Buscar
-                </button>
 
                 <div className="filtro-group relatorio">
                   <label>Data Criação Início</label>
@@ -265,9 +264,13 @@ export default function MinhasSolicitacoes() {
                   />
                 </div>
 
-                <a  href={linkExportar} target="blank" className="btn-buscar excel">
+                <button type="submit" className="btn-buscar">
+                  <FaSearch /> Buscar
+                </button>
+
+                <button  onClick={() => exportar(linkExportar)} className="btn-buscar excel">
                   <FaFileExcel /> Exportar
-                </a>                
+                </button>                
             </div>
         </form>
       </PageHeader>

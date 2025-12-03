@@ -207,7 +207,6 @@ export default function InclusaoArquivo() {
         <FaPlus /> Adicionar Arquivo
       </button>
 
-      {/* === Modal Upload === */}
       {showModal && (
         <div className="modal-overlay">
           <div className="modal">

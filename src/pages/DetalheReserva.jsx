@@ -235,10 +235,10 @@ export default function DetalheReserva() {
               currency: "BRL",
             })}
           </div>
-          {reserva.valorReal > 0 && (
+          {reserva.valorComTaxa > 0 && (
             <div>
-              <strong>Valor Real:</strong>{" "}
-              {reserva.valorReal.toLocaleString("pt-BR", {
+              <strong>Valor Total:</strong>{" "}
+              {reserva.valorComTaxa.toLocaleString("pt-BR", {
                 style: "currency",
                 currency: "BRL",
               })}

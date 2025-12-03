@@ -110,11 +110,11 @@ export default function DashboardReservas() {
   // Cores por status no gráfico de pizza
   const statusColors = {
     Pendente: "#facc15",
-    "Concluído Parcialmente": "#f97316",
+    "Concluído Parcialmente": "#facc15",
     Concluído: "#22c55e",
     Aprovado: "#22c55e",
     Reprovado: "#ef4444",
-    Cancelado: "#6b21a8",
+    Cancelado: "#ef4444",
   };
 
   return (

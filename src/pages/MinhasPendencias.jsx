@@ -97,15 +97,17 @@ export default function MinhasPendencias() {
               <div className="card-body">
                 <div className="col">
                   <p><strong>Solicitante:</strong> {p.usuarioSolicitanteNome}</p>
-                  <p><strong>Qtde. Pessoas:</strong> {p.quantidadePessoas}</p>
-                </div>
-                <div className="col">
-                  <p><strong>Período:</strong> {new Date(p.dataInicio).toLocaleDateString("pt-BR")} - {new Date(p.dataFim).toLocaleDateString("pt-BR")}</p>
+                  <p><strong>Valor Imóvel:</strong> {p.valorImovel.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</p>
                   <p><strong>Anfitrião:</strong> {p.nomeAnfitriao}</p>
                 </div>
                 <div className="col">
-                  <p><strong>Valor Imóvel:</strong> {p.valorImovel.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</p>
+                  <p><strong>Período:</strong> {new Date(p.dataInicio).toLocaleDateString("pt-BR")} - {new Date(p.dataFim).toLocaleDateString("pt-BR")}</p>
+                  <p><strong>Valor Total:</strong> {p.valorComTaxa.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</p>
                   <p><strong>Telefone:</strong> {p.telefoneAnfitriao}</p>
+                </div>
+                <div className="col">
+                  <p><strong>Qtde. Pessoas:</strong> {p.quantidadePessoas}</p>
+                  <p><strong>Centro De Custo:</strong> {p.centroDeCusto}</p>
                 </div>
                 <div className="col-2">
                   <p><strong>Motivo:</strong> {p.motivo}</p>
