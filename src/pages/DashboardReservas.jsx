@@ -5,6 +5,8 @@ import {
   FaMoneyBillWave,
   FaCalendarDay,
   FaSearch,
+  FaEye,
+  FaEyeSlash
 } from "react-icons/fa";
 import {
   PieChart,
@@ -33,32 +35,98 @@ export default function DashboardReservas() {
     colaborador: "",
     centroCusto: "",
     cidade: "",
-    dataInicio: "",
-    dataFim: "",
+    periodo: "TODOS",
+    filtrarValorSemTaxa: false,
   });
 
   const handleFiltroChange = (e) => {
-    setFiltros({ ...filtros, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFiltros((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleToggleSemTaxa = () => {
+    setFiltros((prev) => ({
+      ...prev,
+      filtrarValorSemTaxa: !prev.filtrarValorSemTaxa,
+    }));
   };
 
   const carregarDashboard = async () => {
     try {
       setLoading(true);
+
+      const { dataInicio, dataFim } = calcularIntervaloPorPeriodo();
+
       const response = await api.get("/api/reservas/dashboard", {
         params: {
           colaborador: filtros.colaborador || null,
           centroDeCusto: filtros.centroCusto || null,
           cidade: filtros.cidade || null,
-          dataInicio: filtros.dataInicio || null,
-          dataFim: filtros.dataFim || null,
+          dataInicio,
+          dataFim,
+          FiltrarValorSemTaxa: filtros.filtrarValorSemTaxa,
         },
       });
+
       setResumo(response.data);
     } catch (err) {
       console.error("Erro ao carregar dashboard:", err);
     } finally {
       setLoading(false);
     }
+  };
+
+  const calcularIntervaloPorPeriodo = () => {
+    const hoje = new Date();
+    let dataInicio = null;
+    let dataFim = null;
+
+    switch (filtros.periodo) {
+      case "DIA": {
+        dataInicio = hoje;
+        dataFim = hoje;
+        break;
+      }
+      case "SEMANA": {
+        dataFim = hoje;
+        const inicio = new Date();
+        inicio.setDate(hoje.getDate() - 7);
+        dataInicio = inicio;
+        break;
+      }
+      case "MES": {
+        dataFim = hoje;
+        const inicio = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+        dataInicio = inicio;
+        break;
+      }
+      case "SEMESTRE": {
+        dataFim = hoje;
+        const inicio = new Date();
+        inicio.setMonth(hoje.getMonth() - 6);
+        dataInicio = inicio;
+        break;
+      }
+      case "ANO": {
+        dataFim = hoje;
+        const inicio = new Date(hoje.getFullYear(), 0, 1);
+        dataInicio = inicio;
+        break;
+      }
+      case "TODOS":
+      default: {
+        dataInicio = null;
+        dataFim = null;
+        break;
+      }
+    }
+
+    const toInputDate = (d) => (d ? d.toISOString().slice(0, 10) : null);
+
+    return {
+      dataInicio: toInputDate(dataInicio),
+      dataFim: toInputDate(dataFim),
+    };
   };
 
   const carregarColaboradores = async () => {
@@ -92,8 +160,11 @@ export default function DashboardReservas() {
     carregarColaboradores();
     carregarCentroDeCusto();
     carregarCidades();
-    carregarDashboard();
   }, []);
+
+  useEffect(() => {
+    carregarDashboard();
+  }, [filtros]);
 
   const formatCurrency = (num) =>
     num?.toLocaleString("pt-BR", {
@@ -121,10 +192,10 @@ export default function DashboardReservas() {
     <div className="page-wrapper">
       <PageHeader title="Dashboard de Reservas" />
 
-      {/* === FILTROS === */}
+            {/* === FILTROS === */}
       <div className="filtro-container">
         <select
-          style={{ width: 200 }}
+          style={{ width: '20%' }}
           name="colaborador"
           value={filtros.colaborador}
           onChange={handleFiltroChange}
@@ -138,21 +209,7 @@ export default function DashboardReservas() {
         </select>
 
         <select
-          style={{ width: 200 }}
-          name="cidade"
-          value={filtros.cidade}
-          onChange={handleFiltroChange}
-        >
-          <option value="">Todas Cidades</option>
-          {cidades.map((c) => (
-            <option key={c} value={c}>
-              {c}
-            </option>
-          ))}
-        </select>
-
-        <select
-          style={{ width: 200 }}
+          style={{ width: '20%' }}
           name="centroCusto"
           value={filtros.centroCusto}
           onChange={handleFiltroChange}
@@ -165,33 +222,46 @@ export default function DashboardReservas() {
           ))}
         </select>
 
-        <input
-          style={{ width: 120, minWidth: 120 }}
-          type="date"
-          name="dataInicio"
-          value={filtros.dataInicio}
+        <select
+          style={{ width: '20%' }}
+          name="cidade"
+          value={filtros.cidade}
           onChange={handleFiltroChange}
-        />
-        <input
-          style={{ width: 120, minWidth: 120 }}
-          type="date"
-          name="dataFim"
-          value={filtros.dataFim}
+        >
+          <option value="">Todas Cidades</option>
+          {cidades.map((c) => (
+            <option key={c} value={c}>
+              {c}
+            </option>
+          ))}
+        </select>
+
+        {/* Combo de Período */}
+        <select
+          style={{ width: '20%' }}
+          name="periodo"
+          value={filtros.periodo}
           onChange={handleFiltroChange}
-        />
+        >
+          <option value="DIA">Dia</option>
+          <option value="SEMANA">Semana</option>
+          <option value="MES">Mês</option>
+          <option value="SEMESTRE">Semestre</option>
+          <option value="ANO">Ano</option>
+          <option value="TODOS">Todo o período</option>
+        </select>
 
         <button
-          onClick={carregarDashboard}
-          className="btn-buscar-dashboard"
-          disabled={loading}
+          type="button"
+          className={`tax-toggle-btn ${
+            filtros.filtrarValorSemTaxa ? "off" : "on"
+          }`}
+          onClick={handleToggleSemTaxa}
         >
-          {loading ? (
-            <span className="spinner" />
-          ) : (
-            <>
-              <FaSearch /> <span>Buscar</span>
-            </>
-          )}
+          {filtros.filtrarValorSemTaxa ? <FaEyeSlash /> : <FaEye />}
+          <span>
+            {filtros.filtrarValorSemTaxa ? "Sem taxa" : "Com taxa"}
+          </span>
         </button>
       </div>
 
@@ -338,7 +408,7 @@ export default function DashboardReservas() {
 
           {/* Barras verticais - Últimos 5 meses */}
           <div className="chart-card">
-            <h3>Despesas – Últimos 5 Meses</h3>
+            <h3>Qtde. Reservas – Últimos 5 Meses</h3>
             <div className="chart-graph">
               <ResponsiveContainer width="100%" height={260}>
                 <BarChart
@@ -356,9 +426,9 @@ export default function DashboardReservas() {
                   />
                   <YAxis tick={{ fontSize: 10 }} />
                   <Tooltip
-                    formatter={(value) => formatCurrency(value)}
+                    formatter={(value) => value}
                   />
-                  <Bar dataKey="valor" radius={[8, 8, 0, 0]} fill="#22c55e" />
+                  <Bar dataKey="quantidade" radius={[8, 8, 0, 0]} fill="#22c55e" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
