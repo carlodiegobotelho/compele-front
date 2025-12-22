@@ -9,7 +9,9 @@ import {
   FaExternalLinkAlt,
   FaEye,
   FaSyncAlt,
+  FaCopy,
 } from "react-icons/fa";
+import { ToastContainer, toast } from "react-toastify";
 import "../styles/MinhasPendencias.css";
 
 export default function MinhasPendencias() {
@@ -82,6 +84,24 @@ export default function MinhasPendencias() {
               <div className="card-header">
                 <div className="header-left">
                   <h3>Colaborador: {p.usuarioColaboradorNome}</h3>
+                  {p.usuarioColaboradorEmail && (
+                      <div className="email-badge-row">
+                        <small className="email-badge">{p.usuarioColaboradorEmail}
+      
+                          <button
+                            type="button"
+                            className="btn-copy-email"
+                            title="Copiar e-mail"
+                            onClick={async () => {
+                              await navigator.clipboard.writeText(p.usuarioColaboradorEmail);
+                              toast.success("E-mail copiado!");
+                            }}
+                          >
+                            <FaCopy />
+                          </button>
+                        </small>
+                      </div>
+                    )}
                   <span className="cidade">Cidade: {p.cidade}</span>
                 </div>
                 <a
@@ -170,6 +190,7 @@ export default function MinhasPendencias() {
           </div>
         </div>
       )}
+      <ToastContainer position="top-right" />
     </div>
   );
 }

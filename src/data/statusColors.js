@@ -1,7 +1,7 @@
 export const STATUS_COLORS = {
   "Pendente": {
     bg: "#F59E0B",
-    text: "#111827",
+    text: "#ffffff",
   },
   "Aprovada": {
     bg: "#22C55E",
@@ -28,7 +28,7 @@ export const STATUS_COLORS = {
 export const STATUS_COLORS_ID = {
   1: {
     bg: "#F59E0B",
-    text: "#111827",
+    text: "#ffffff",
   },
   2: {
     bg: "#22C55E",
