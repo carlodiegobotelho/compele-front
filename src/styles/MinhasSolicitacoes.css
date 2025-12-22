@@ -159,6 +159,7 @@ th.sorted-desc::after {
 .tooltip-container {
   position: relative;
   display: inline-block;
+  cursor: pointer;
 }
 
 .info-icon {

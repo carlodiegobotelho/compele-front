@@ -418,3 +418,46 @@
   text-align: center;
   margin: 15px 0;
 }
+
+/* ===== EMAIL BADGE ===== */
+.email-badge-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.email-badge {
+  background: #2563eb;
+  color: #fff;
+  font-weight: 700;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  letter-spacing: 0.2px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.btn-copy-email {
+  border: none;
+  background: transparent;
+  color: #fff;
+  width: 34px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease, background 0.15s ease;
+  padding: 0px;
+}
+
+.btn-copy-email:hover {
+  background: transparent;
+  transform: translateY(-1px);
+}
+
+.btn-copy-email:active {
+  transform: translateY(0);
+}

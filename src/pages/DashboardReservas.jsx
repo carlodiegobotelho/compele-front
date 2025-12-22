@@ -20,6 +20,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { STATUS_COLORS } from "../data/statusColors";
 import api from "../services/api";
 import "../styles/DashboardReservas.css";
 
@@ -178,16 +179,6 @@ export default function DashboardReservas() {
   const dadosCidades = (resumo?.agrupadoPorCidade || []).slice(0, 5);
   const dadosMeses = (resumo?.agrupadoPorMes || []).slice(-5);
 
-  // Cores por status no gráfico de pizza
-  const statusColors = {
-    Pendente: "#facc15",
-    "Concluído Parcialmente": "#facc15",
-    Concluído: "#22c55e",
-    Aprovado: "#22c55e",
-    Reprovado: "#ef4444",
-    Cancelado: "#ef4444",
-  };
-
   return (
     <div className="page-wrapper">
       <PageHeader title="Dashboard de Reservas" />
@@ -291,7 +282,7 @@ export default function DashboardReservas() {
             <FaCalendarDay />
             <div className="card-content">
               <strong>{formatCurrency(resumo.valorMedioPorDiaria ?? 0)}</strong>
-              <span>Valor Médio / Diária</span>
+              <span>Valor Médio / Diária / Pessoa</span>
             </div>
           </div>
         </div>
@@ -319,7 +310,6 @@ export default function DashboardReservas() {
               paddingAngle={3}
               activeIndex={activeStatusIndex}
               onClick={(_, index) => {
-                // se clicar de novo na mesma fatia, desmarca
                 setActiveStatusIndex(index === activeStatusIndex ? null : index);
               }}
             >
@@ -327,10 +317,7 @@ export default function DashboardReservas() {
                 <Cell
                   key={`cell-${index}`}
                   fill={
-                    statusColors[entry.label] ||
-                    ["#3b82f6", "#22c55e", "#f97316", "#ef4444", "#6b21a8"][
-                      index % 5
-                    ]
+                    STATUS_COLORS[entry.label].bg || "#3b82f6"
                   }
                   style={{ cursor: "pointer" }}
                 />
@@ -362,10 +349,7 @@ export default function DashboardReservas() {
               className="legend-dot"
               style={{
                 backgroundColor:
-                  statusColors[item.label] ||
-                  ["#3b82f6", "#22c55e", "#f97316", "#ef4444", "#6b21a8"][
-                    idx % 5
-                  ],
+                  STATUS_COLORS[item.label].bg || "#3b82f6"
               }}
             />
             <span className="legend-label">

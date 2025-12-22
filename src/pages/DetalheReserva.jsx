@@ -11,11 +11,13 @@ import {
   FaEye,
   FaDownload,
   FaTrash,
+  FaCopy,
 } from "react-icons/fa";
 import PageHeader from "../components/PageHeader";
 import "../styles/DetalhesReserva.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { STATUS_COLORS } from "../data/statusColors";
 
 export default function DetalheReserva() {
   const { id } = useParams();
@@ -174,7 +176,7 @@ export default function DetalheReserva() {
     reserva.perfilUsuario === "aprovador" && reserva.statusId === 1;
 
   const exibeInclusaoRecibo =
-    reserva.perfilUsuario === "aprovador" && reserva.statusId === 2;
+    reserva.perfilUsuario === "aprovador";
 
   return (
     <div className="page-wrapper">
@@ -193,18 +195,34 @@ export default function DetalheReserva() {
               <h2 className="solicitante-nome">
                 Colaborador: {reserva.usuarioColaboradorNome}
               </h2>
+              {reserva.usuarioColaboradorEmail && (
+                <div className="email-badge-row">
+                  <small className="email-badge">{reserva.usuarioColaboradorEmail}
+
+                    <button
+                      type="button"
+                      className="btn-copy-email"
+                      title="Copiar e-mail"
+                      onClick={async () => {
+                        await navigator.clipboard.writeText(reserva.usuarioColaboradorEmail);
+                        toast.success("E-mail copiado!");
+                      }}
+                    >
+                      <FaCopy />
+                    </button>
+                  </small>
+                </div>
+              )}
               <p className="cidade">Cidade: {reserva.cidade}</p>
             </div>
           </div>
 
           <span
-            className={`status-badge ${
-              reserva.statusId === 1
-                ? "pendente"
-                : reserva.statusId === 2
-                ? "aprovado"
-                : "reprovado"
-            }`}
+            className={`status-badge`} 
+            style={{
+              backgroundColor: STATUS_COLORS[reserva.status]?.bg || "#3b82f6",
+              color: STATUS_COLORS[reserva.status]?.text || "#ffffff"
+            }}
           >
             {reserva.status}
           </span>

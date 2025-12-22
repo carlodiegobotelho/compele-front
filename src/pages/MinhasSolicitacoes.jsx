@@ -4,7 +4,7 @@ import { FaInfoCircle, FaSearch, FaEye, FaFileExcel } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom'
 import PageHeader from "../components/PageHeader";
 import "../styles/MinhasSolicitacoes.css";
-import { TextAlignCenter } from "lucide-react";
+import { STATUS_COLORS } from "../data/statusColors";
 
 export default function MinhasSolicitacoes() {
   const navigate = useNavigate();
@@ -103,24 +103,6 @@ export default function MinhasSolicitacoes() {
     ).toString();
 
     return `https://compeleservice.com/compele-api/api/reservas/exportar-minhas-solicitacoes${params ? `?${params}` : ""}`;
-  };
-
-  const getStatusColor = (status) => {
-    switch (status.toLowerCase()) {
-      case "pendente":
-      case "concluidoparcialmente":
-      case "concluído parcialmente":
-        return "status-pendente";
-      case "aprovado":
-      case "concluido":
-      case "concluído":
-        return "status-aprovado";
-      case "reprovado":
-      case "cancelado":
-        return "status-rejeitado";
-      default:
-        return "";
-    }
   };
 
   const sortedSolicitacoes = [...solicitacoes].sort((a, b) => {
@@ -304,7 +286,6 @@ export default function MinhasSolicitacoes() {
                 </th>
                 ))}
                 <th></th>
-                <th></th>
             </tr>
             </thead>
             <tbody>
@@ -332,13 +313,13 @@ export default function MinhasSolicitacoes() {
                       currency: "BRL",
                     })}</td>
                   <td>
-                    <span className={`status-chip ${getStatusColor(s.status)}`}>
-                      {s.status}
-                    </span>
-                  </td>
-                  <td>
                     <div className="tooltip-container">
-                      <FaInfoCircle className="info-icon" />
+                      <span className={`status-chip`} style={{
+                          backgroundColor: STATUS_COLORS[s.status]?.bg || "#3b82f6",
+                          color: STATUS_COLORS[s.status]?.text || "#ffffff"
+                        }}>
+                        {s.status}
+                      </span>
                       <span className="tooltip-text">{s.motivo}</span>
                     </div>
                   </td>
