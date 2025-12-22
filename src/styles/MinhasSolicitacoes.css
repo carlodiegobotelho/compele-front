@@ -90,7 +90,6 @@ th.sorted-desc::after {
   transition: 0.2s;
   width: 190px!important;
   text-align: center;
-  margin: 0 auto;
 }
 
 .btn-buscar.excel {
