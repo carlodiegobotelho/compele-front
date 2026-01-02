@@ -27,7 +27,7 @@ const cidades = [
   "Patos", "Nova Friburgo", "Juazeiro", "Garanhuns", "Guarapuava", "Barretos",
   "Sertãozinho", "Formosa", "Cabo de Santo Agostinho", "Parnaíba", "Caruaru",
   "Açailândia", "Divinópolis", "Sinop", "Chapadinha", "Santa Cruz do Sul",
-  "Ji-Paraná", "Ariquemes", "Capanema", "Abreu e Lima", "Altamira", "Itapecerica da Serra"
+  "Ji-Paraná", "Ariquemes", "Capanema", "Abreu e Lima", "Altamira", "Itapecerica da Serra", "Suzano"
 ];
 
 export default cidades;

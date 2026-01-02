@@ -89,9 +89,9 @@ export default function SolicitarReserva() {
         observacao: "",
       });
     } catch (err) {
-      console.error(error);
+      console.error(err);
       toast.error(
-        error?.response?.data?.erros?.[0] ||
+        err?.response?.data?.erros?.[0] ||
           "Erro ao enviar solicitação. Verifique os campos digitados e tente novamente."
       );
     } finally {
