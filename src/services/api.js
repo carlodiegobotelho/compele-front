@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://compeleservice.com/compele-api",
+  baseURL: "https://dphy3f0snrx0g.cloudfront.net/compele-api",
 });
 
 

@@ -48,26 +48,28 @@ export default function SolicitarReserva() {
 
     setLoading(true);
 
-    const toDecimal = (v) =>
-      Number(v.replace(/[R$\s.]/g, "").replace(",", ".")) || 0;
-
-    const payload = {
-      dataInicio: form.dataInicio,
-      dataFim: form.dataFim,
-      cidade: form.cidade,
-      nomeColaborador: form.nomeColaborador,
-      emailColaborador: form.emailColaborador,
-      nomeAnfitriao: form.nomeAnfitriao,
-      telefoneAnfitriao: form.telefoneAnfitriao,
-      linkImovel: form.linkImovel,
-      valorImovel: toDecimal(form.valorImovel),
-      centroDeCusto: form.centroDeCusto,
-      quantidadePessoas: Number(form.quantidadePessoas),
-      motivo: form.motivo,
-      observacao: form.observacao,
-    };
-
     try {
+      const toDecimal = (v) =>
+        Number(v.replace(/[R$\s.]/g, "").replace(",", ".")) || 0;
+
+      const payload = {
+        dataInicio: form.dataInicio,
+        dataFim: form.dataFim,
+        cidade: form.cidade,
+        nomeColaborador: form.nomeColaborador,
+        emailColaborador: form.emailColaborador,
+        nomeAnfitriao: form.nomeAnfitriao,
+        telefoneAnfitriao: form.telefoneAnfitriao,
+        linkImovel: form.linkImovel,
+        valorImovel: toDecimal(form.valorImovel),
+        centroDeCusto: form.centroDeCusto,
+        quantidadePessoas: Number(form.quantidadePessoas),
+        motivo: form.motivo,
+        observacao: form.observacao,
+      };
+
+      console.log(payload);
+
       await api.post("/api/reservas", payload);
 
       setShowModal(true);
