@@ -291,7 +291,7 @@ export default function DashboardReservas() {
             <FaMoneyBillTrendUp />
             <div className="card-content">
               <strong>{formatCurrency(resumo.valorEconomiaEstimada ?? 0)}</strong>
-              <span>Custo Evitado</span>
+              <span>Economia Estimada</span>
             </div>
           </div>
         </div>
