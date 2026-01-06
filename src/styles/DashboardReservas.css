@@ -65,7 +65,7 @@
 /* ===== CARDS ===== */
 .cards-container {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 18px;
   margin-bottom: 24px;
 }
@@ -112,6 +112,14 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 18px;
+}
+
+/* ===== GRÁFICOS ROW ===== */
+.charts-row-bottom {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 15px;
 }
 
 /* ===== CARD DE GRÁFICO ===== */
@@ -172,6 +180,10 @@
   }
 
   .charts-row {
+    grid-template-columns: 1fr;
+  }
+
+  .charts-row-bottom {
     grid-template-columns: 1fr;
   }
 

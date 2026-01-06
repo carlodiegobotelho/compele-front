@@ -4,7 +4,6 @@ import {
   FaClipboardList,
   FaMoneyBillWave,
   FaCalendarDay,
-  FaSearch,
   FaEye,
   FaEyeSlash
 } from "react-icons/fa";
@@ -23,6 +22,7 @@ import {
 import { STATUS_COLORS } from "../data/statusColors";
 import api from "../services/api";
 import "../styles/DashboardReservas.css";
+import { FaMoneyBillTrendUp } from "react-icons/fa6";
 
 export default function DashboardReservas() {
   const [resumo, setResumo] = useState(null);
@@ -177,7 +177,8 @@ export default function DashboardReservas() {
   // Dados para gráficos
   const dadosStatus = resumo?.agrupadoPorStatus || [];
   const dadosCidades = (resumo?.agrupadoPorCidade || []).slice(0, 5);
-  const dadosMeses = (resumo?.agrupadoPorMes || []).slice(-5);
+  const dadosMeses = (resumo?.agrupadoPorMes || []).slice(-6);
+  const dadosComparativo = (resumo?.comparativoHotelaria || []).slice(-2);
 
   return (
     <div className="page-wrapper">
@@ -285,6 +286,14 @@ export default function DashboardReservas() {
               <span>Valor Médio / Diária / Pessoa</span>
             </div>
           </div>
+
+          <div className="card kpi">
+            <FaMoneyBillTrendUp />
+            <div className="card-content">
+              <strong>{formatCurrency(resumo.valorEconomiaEstimada ?? 0)}</strong>
+              <span>Custo Evitado</span>
+            </div>
+          </div>
         </div>
       )}
 
@@ -292,75 +301,72 @@ export default function DashboardReservas() {
       {resumo && (
         <div className="charts-row">
 
+          {/* Pizza por Status */}
+          <div className="chart-card">
+            <h3>Reservas</h3>
 
-    {/* Pizza por Status */}
-    <div className="chart-card">
-      <h3>Reservas</h3>
+            {/* Gráfico centralizado */}
+            <div className="chart-graph chart-graph-center">
+              <ResponsiveContainer width="100%" height={220}>
+                <PieChart>
+                  <Pie
+                    data={dadosStatus}
+                    dataKey="quantidade"
+                    nameKey="label"
+                    innerRadius={40}
+                    outerRadius={90}
+                    paddingAngle={3}
+                    activeIndex={activeStatusIndex}
+                    onClick={(_, index) => {
+                      setActiveStatusIndex(index === activeStatusIndex ? null : index);
+                    }}
+                  >
+                    {dadosStatus.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={
+                          STATUS_COLORS[entry.label].bg || "#3b82f6"
+                        }
+                        style={{ cursor: "pointer" }}
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    formatter={(value, name, props) => [
+                      `${value}`,
+                      props.payload.label,
+                    ]}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
 
-      {/* Gráfico centralizado */}
-      <div className="chart-graph chart-graph-center">
-        <ResponsiveContainer width="100%" height={220}>
-          <PieChart>
-            <Pie
-              data={dadosStatus}
-              dataKey="quantidade"
-              nameKey="label"
-              innerRadius={40}
-              outerRadius={90}
-              paddingAngle={3}
-              activeIndex={activeStatusIndex}
-              onClick={(_, index) => {
-                setActiveStatusIndex(index === activeStatusIndex ? null : index);
-              }}
-            >
-              {dadosStatus.map((entry, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={
-                    STATUS_COLORS[entry.label].bg || "#3b82f6"
+            {/* Legenda embaixo, ocupando menos espaço */}
+            <div className="chart-legend chart-legend-horizontal">
+              {dadosStatus.map((item, idx) => (
+                <div
+                  key={idx}
+                  className={`legend-item ${
+                    activeStatusIndex === idx ? "legend-item-active" : ""
+                  }`}
+                  onClick={() =>
+                    setActiveStatusIndex(activeStatusIndex === idx ? null : idx)
                   }
-                  style={{ cursor: "pointer" }}
-                />
+                >
+                  <span
+                    className="legend-dot"
+                    style={{
+                      backgroundColor:
+                        STATUS_COLORS[item.label].bg || "#3b82f6"
+                    }}
+                  />
+                  <span className="legend-label">
+                    {item.label} ({item.quantidade})
+                  </span>
+                </div>
               ))}
-            </Pie>
-            <Tooltip
-              formatter={(value, name, props) => [
-                `${value}`,
-                props.payload.label,
-              ]}
-            />
-          </PieChart>
-        </ResponsiveContainer>
-      </div>
-
-      {/* Legenda embaixo, ocupando menos espaço */}
-      <div className="chart-legend chart-legend-horizontal">
-        {dadosStatus.map((item, idx) => (
-          <div
-            key={idx}
-            className={`legend-item ${
-              activeStatusIndex === idx ? "legend-item-active" : ""
-            }`}
-            onClick={() =>
-              setActiveStatusIndex(activeStatusIndex === idx ? null : idx)
-            }
-          >
-            <span
-              className="legend-dot"
-              style={{
-                backgroundColor:
-                  STATUS_COLORS[item.label].bg || "#3b82f6"
-              }}
-            />
-            <span className="legend-label">
-              {item.label} ({item.quantidade})
-            </span>
+            </div>
           </div>
-        ))}
-      </div>
-    </div>
-
-
 
           {/* Barras horizontais - Cidades */}
           <div className="chart-card">
@@ -369,7 +375,7 @@ export default function DashboardReservas() {
               <ResponsiveContainer width="100%" height={260}>
                 <BarChart
                   data={dadosCidades}
-                  margin={{ top: 20, right: 5, left: 5, bottom: 20 }}
+                  margin={{ top: 10, right: 2, left: 2, bottom: 10 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis
@@ -390,22 +396,57 @@ export default function DashboardReservas() {
             </div>
           </div>
 
-          {/* Barras verticais - Últimos 5 meses */}
+           {/* Barras verticais - Últimos 5 meses */}
           <div className="chart-card">
-            <h3>Qtde. Reservas – Últimos 5 Meses</h3>
+            <h3>Compele x Hotelaria</h3>
             <div className="chart-graph">
               <ResponsiveContainer width="100%" height={260}>
                 <BarChart
+                  data={dadosComparativo}
+                  margin={{ top: 10, right: 2, left: 2, bottom: 10 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis
+                    dataKey="label"
+                    tick={{ fontSize: 11 }}
+                    height={50}
+                    width={60}
+                  />
+                  <YAxis tick={{ fontSize: 10 }} />
+                  <Tooltip
+                    formatter={(value) => formatCurrency(value)}
+                  />
+                  <Bar dataKey="valor" radius={[8, 8, 0, 0]}>
+                    {dadosComparativo.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.cor} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+        </div>
+      )}
+
+        {/* === GRÁFICOS === */}
+      {resumo && (
+        <div className="charts-row-bottom">
+
+          {/* Barras verticais - Últimos 5 meses */}
+          <div className="chart-card">
+            <h3>Quantidade de Reservas – Últimos 6 Meses</h3>
+            <div className="chart-graph">
+              <ResponsiveContainer width="100%" height={120}>
+                <BarChart
                   data={dadosMeses}
-                  margin={{ top: 20, right: 5, left: 5, bottom: 20 }}
+                  margin={{ top: 10, right: 10, left: 10, bottom: 2 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis
                     dataKey="label"
                     tick={{ fontSize: 9 }}
-                    angle={-40}
-                    textAnchor="end"
-                    height={50}
+                    height={20}
                     width={60}
                   />
                   <YAxis tick={{ fontSize: 10 }} />
@@ -417,8 +458,10 @@ export default function DashboardReservas() {
               </ResponsiveContainer>
             </div>
           </div>
+
         </div>
       )}
+
     </div>
   );
 }
