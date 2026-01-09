@@ -1,11 +1,15 @@
-/* ===== CONTAINER PRINCIPAL ===== */
+/* =========================================================
+   CONTAINER PRINCIPAL
+========================================================= */
 .page-wrapper {
   padding: 25px 40px;
   background-color: #f3f4f6;
   min-height: 100vh;
 }
 
-/* ===== FILTROS ===== */
+/* =========================================================
+   FILTROS
+========================================================= */
 .filtro-container {
   display: flex;
   flex-wrap: wrap;
@@ -21,48 +25,59 @@
   border-radius: 8px;
   background-color: #fff;
   font-size: 0.95rem;
-  margin-bottom: 0px!important;
 }
 
-.btn-buscar-dashboard {
+/* =========================================================
+   TOGGLE COM / SEM TAXA
+========================================================= */
+.tax-toggle-btn {
   display: flex;
   align-items: center;
   gap: 8px;
-  background-color: #2563eb;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 8px 18px;
-  font-weight: 600;
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 0.9rem;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  color: #4b5563;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: all 0.2s ease;
 }
 
-.btn-buscar-dashboard:hover:not(:disabled) {
-  background-color: #1d4ed8;
+.tax-toggle-btn svg {
+  font-size: 16px;
 }
 
-.btn-buscar-dashboard:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+/* COM TAXA */
+.tax-toggle-btn.on {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #ffffff;
 }
 
-.spinner {
-  width: 18px;
-  height: 18px;
-  border: 3px solid #fff;
-  border-top-color: transparent;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+.tax-toggle-btn.on svg {
+  color: #ffffff;
 }
 
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+/* SEM TAXA */
+.tax-toggle-btn.off {
+  background: #ffffff;
+  border-color: #d1d5db;
+  color: #4b5563;
 }
 
-/* ===== CARDS ===== */
+.tax-toggle-btn.off svg {
+  color: #6b7280;
+}
+
+.tax-toggle-btn:hover {
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.12);
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   CARDS KPI
+========================================================= */
 .cards-container {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -107,22 +122,25 @@
   color: #6b7280;
 }
 
-/* ===== GRÁFICOS ROW ===== */
+/* =========================================================
+   LINHA DE GRÁFICOS
+========================================================= */
 .charts-row {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 18px;
 }
 
-/* ===== GRÁFICOS ROW ===== */
 .charts-row-bottom {
   display: grid;
-  grid-template-columns: repeat(1, minmax(0, 1fr));
+  grid-template-columns: 1fr;
   gap: 18px;
   margin-top: 15px;
 }
 
-/* ===== CARD DE GRÁFICO ===== */
+/* =========================================================
+   CARD DE GRÁFICO
+========================================================= */
 .chart-card {
   background: #fff;
   border-radius: 14px;
@@ -139,74 +157,20 @@
   margin-bottom: 12px;
 }
 
-.chart-content {
-  display: flex;
-  height: 100%;
-  gap: 10px;
-}
-
-/* dentro do card de pizza (grafico + legenda) */
 .chart-graph {
   flex: 1;
 }
 
-/* ===== LEGENDA DO PIZZA ===== */
-.chart-legend {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  justify-content: center;
-  min-width: 140px;
-}
-
-.legend-item {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.85rem;
-  color: #4b5563;
-}
-
-.legend-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 999px;
-}
-
-/* ===== RESPONSIVIDADE ===== */
-@media (max-width: 1024px) {
-  .cards-container {
-    grid-template-columns: 1fr;
-  }
-
-  .charts-row {
-    grid-template-columns: 1fr;
-  }
-
-  .charts-row-bottom {
-    grid-template-columns: 1fr;
-  }
-
-  .chart-content {
-    flex-direction: column;
-  }
-
-  .chart-legend {
-    flex-direction: row;
-    flex-wrap: wrap;
-    min-width: 0;
-  }
-}
-
-/* Centralizar o gráfico de pizza no card */
 .chart-graph-center {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* Legenda embaixo, ocupando menos espaço */
-.chart-legend.chart-legend-horizontal {
+/* =========================================================
+   LEGENDA DO GRÁFICO PIZZA
+========================================================= */
+.chart-legend-horizontal {
   margin-top: 10px;
   display: flex;
   flex-wrap: wrap;
@@ -224,9 +188,12 @@
   transition: transform 0.15s ease, opacity 0.15s ease;
 }
 
+.legend-item:hover {
+  opacity: 0.85;
+}
+
 .legend-item-active {
   transform: translateY(-1px);
-  opacity: 1;
   font-weight: 600;
 }
 
@@ -240,48 +207,129 @@
   white-space: nowrap;
 }
 
-.tax-toggle-btn {
+/* =========================================================
+   RESPONSIVIDADE
+========================================================= */
+@media (max-width: 1024px) {
+  .cards-container {
+    grid-template-columns: 1fr;
+  }
+
+  .charts-row {
+    grid-template-columns: 1fr;
+  }
+
+  .charts-row-bottom {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card.kpi.kpi-tooltip {
+  position: relative;
+  z-index: 50;
+  overflow: visible;
+  cursor: help;
+}
+
+.kpi-tooltip-box::before {
+  left: auto;
+  right: 26px;
+}
+
+.kpi-tooltip::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 100%;
+  height: 12px;     
+  width: 100%;
+}
+
+/* ===== Tooltip KPI (Economia Estimada) ===== */
+.kpi-tooltip {
+  position: relative;
+}
+
+.kpi-tooltip-box {
+  position: absolute;
+  top: calc(100% + 10px);  /* abre para baixo */
+  left: auto;
+  right: 0;
+  width: 220px;
+  max-width: 90vw;
+  background: #111827; /* quase preto */
+  color: #e5e7eb;      /* cinza clarinho */
+  border-radius: 12px;
+  padding: 12px 14px;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.28);
+  z-index: 999999!important;
+  opacity: 0;
+  transform: translateY(-4px);
+  pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.kpi-tooltip:hover .kpi-tooltip-box {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* “setinha” do tooltip */
+.kpi-tooltip-box::before {
+  content: "";
+  position: absolute;
+  top: -7px;
+  left: 26px;
+  width: 14px;
+  height: 14px;
+  background: #111827;
+  transform: rotate(45deg);
+}
+
+/* título */
+.kpi-tooltip-title {
+  font-weight: 600;
+  font-size: 0.80rem;
+  color: #ffffff;
+  margin-bottom: 10px;
+  letter-spacing: 0.2px;
+}
+
+/* lista */
+.kpi-tooltip-list {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 260px;       /* não estoura a tela */
+  overflow: auto;
+  padding-right: 4px;
+}
+
+/* scroll discreto */
+.kpi-tooltip-list::-webkit-scrollbar {
+  width: 6px;
+}
+.kpi-tooltip-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.18);
   border-radius: 999px;
-  padding: 8px 14px;
-  font-size: 0.9rem;
-  border: 1px solid #d1d5db;
-  background: #ffffff;
-  color: #4b5563;
-  cursor: pointer;
-  transition: all 0.2s ease;
 }
 
-.tax-toggle-btn svg {
-  font-size: 16px;
+.kpi-tooltip-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 0.75rem;
+  line-height: 1.25;
 }
 
-/* Estado COM TAXA (azul, olho aberto) */
-.tax-toggle-btn.on {
-  background: #2563eb;
-  border-color: #2563eb;
+.kpi-tooltip-city {
+  color: #e5e7eb;
+  font-weight: 500;
+}
+
+.kpi-tooltip-value {
   color: #ffffff;
-}
-
-.tax-toggle-btn.on svg {
-  color: #ffffff;
-}
-
-/* Estado SEM TAXA (neutro, olho fechado) */
-.tax-toggle-btn.off {
-  background: #ffffff;
-  border-color: #d1d5db;
-  color: #4b5563;
-}
-
-.tax-toggle-btn.off svg {
-  color: #6b7280;
-}
-
-/* Hover suave */
-.tax-toggle-btn:hover {
-  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.12);
-  transform: translateY(-1px);
+  font-weight: 700;
+  white-space: nowrap;
 }

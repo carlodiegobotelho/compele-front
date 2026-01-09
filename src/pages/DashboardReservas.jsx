@@ -257,10 +257,8 @@ export default function DashboardReservas() {
         </button>
       </div>
 
-      {/* === CARDS PRINCIPAIS === */}
       {resumo && (
         <div className="cards-container">
-          {/* Quantidade de Reservas */}
           <div className="card kpi">
             <FaClipboardList />
             <div className="card-content">
@@ -269,7 +267,6 @@ export default function DashboardReservas() {
             </div>
           </div>
 
-          {/* Valor Total */}
           <div className="card kpi">
             <FaMoneyBillWave />
             <div className="card-content">
@@ -278,7 +275,6 @@ export default function DashboardReservas() {
             </div>
           </div>
 
-          {/* Valor Médio / Diária */}
           <div className="card kpi">
             <FaCalendarDay />
             <div className="card-content">
@@ -287,25 +283,48 @@ export default function DashboardReservas() {
             </div>
           </div>
 
-          <div className="card kpi">
+          <div className="card kpi kpi-tooltip">
             <FaMoneyBillTrendUp />
+
             <div className="card-content">
               <strong>{formatCurrency(resumo.valorEconomiaEstimada ?? 0)}</strong>
               <span>Economia Estimada</span>
             </div>
+
+            {Array.isArray(resumo.mediaHotelariaPorCidade) &&
+              resumo.mediaHotelariaPorCidade.length > 0 && (
+                <div className="kpi-tooltip-box">
+                  <div className="kpi-tooltip-title">Tarifa Hotel</div>
+
+                  <div className="kpi-tooltip-list">
+                    {resumo.mediaHotelariaPorCidade.map((item) => (
+                      <div key={item.cidade} className="kpi-tooltip-row">
+                        <span className="kpi-tooltip-city">{item.cidade}:</span>
+                        <span className="kpi-tooltip-value">
+                          {item.valorHotelariaDiario?.toLocaleString("pt-BR", {
+                            style: "currency",
+                            currency: "BRL",
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 2,
+                          })}
+                          /dia
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
           </div>
+
         </div>
       )}
 
-      {/* === GRÁFICOS === */}
       {resumo && (
         <div className="charts-row">
 
-          {/* Pizza por Status */}
           <div className="chart-card">
             <h3>Reservas</h3>
 
-            {/* Gráfico centralizado */}
             <div className="chart-graph chart-graph-center">
               <ResponsiveContainer width="100%" height={220}>
                 <PieChart>
@@ -341,7 +360,6 @@ export default function DashboardReservas() {
               </ResponsiveContainer>
             </div>
 
-            {/* Legenda embaixo, ocupando menos espaço */}
             <div className="chart-legend chart-legend-horizontal">
               {dadosStatus.map((item, idx) => (
                 <div
@@ -368,7 +386,6 @@ export default function DashboardReservas() {
             </div>
           </div>
 
-          {/* Barras horizontais - Cidades */}
           <div className="chart-card">
             <h3>Top 5 Cidades por Gastos</h3>
             <div className="chart-graph">
