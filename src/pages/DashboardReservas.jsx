@@ -31,6 +31,7 @@ export default function DashboardReservas() {
   const [cidades, setCidades] = useState([]);
   const [loading, setLoading] = useState(false);
   const [activeStatusIndex, setActiveStatusIndex] = useState(0);
+  const [activeStatusReservaIndex, setActiveStatusReservaIndex] = useState(0);
 
   const [filtros, setFiltros] = useState({
     colaborador: "",
@@ -175,7 +176,8 @@ export default function DashboardReservas() {
     });
 
   // Dados para gráficos
-  const dadosStatus = resumo?.agrupadoPorStatus || [];
+  const dadosStatus = resumo?.recibosAgrupadoPorStatus || [];
+  const dadosStatusReserva = resumo?.agrupadoPorStatus || [];
   const dadosCidades = (resumo?.agrupadoPorCidade || []).slice(0, 5);
   const dadosMeses = (resumo?.agrupadoPorMes || []).slice(-6);
   const dadosComparativo = (resumo?.comparativoHotelaria || []).slice(-2);
@@ -262,8 +264,8 @@ export default function DashboardReservas() {
           <div className="card kpi">
             <FaClipboardList />
             <div className="card-content">
-              <strong>{resumo.quantidade ?? 0}</strong>
-              <span>Quantidade de Reservas</span>
+              <strong>{resumo.quantidadeRecibos ?? 0}</strong>
+              <span>Quantidade de Recibos</span>
             </div>
           </div>
 
@@ -323,7 +325,7 @@ export default function DashboardReservas() {
         <div className="charts-row">
 
           <div className="chart-card">
-            <h3>Reservas</h3>
+            <h3>Recibos ({resumo.quantidadeRecibos ?? 0})</h3>
 
             <div className="chart-graph chart-graph-center">
               <ResponsiveContainer width="100%" height={220}>
@@ -450,27 +452,92 @@ export default function DashboardReservas() {
       {resumo && (
         <div className="charts-row-bottom">
 
-          {/* Barras verticais - Últimos 5 meses */}
+          <div className="chart-card">
+            <h3>Reservas ({resumo.quantidade ?? 0})</h3>
+            
+            <div className="chart-graph chart-graph-center">
+              <ResponsiveContainer width="100%" height={220}>
+                <PieChart>
+                  <Pie
+                    data={dadosStatusReserva}
+                    dataKey="quantidade"
+                    nameKey="label"
+                    innerRadius={40}
+                    outerRadius={90}
+                    paddingAngle={3}
+                    activeIndex={activeStatusReservaIndex}
+                    onClick={(_, index) => {
+                      setActiveStatusReservaIndex(index === activeStatusReservaIndex ? null : index);
+                    }}
+                  >
+                    {dadosStatusReserva.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={
+                          STATUS_COLORS[entry.label].bg || "#3b82f6"
+                        }
+                        style={{ cursor: "pointer" }}
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    formatter={(value, name, props) => [
+                      `${value}`,
+                      props.payload.label,
+                    ]}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+
+            <div className="chart-legend chart-legend-horizontal">
+              {dadosStatusReserva.map((item, idx) => (
+                <div
+                  key={idx}
+                  className={`legend-item ${
+                    activeStatusReservaIndex === idx ? "legend-item-active" : ""
+                  }`}
+                  onClick={() =>
+                    setActiveStatusReservaIndex(activeStatusReservaIndex === idx ? null : idx)
+                  }
+                >
+                  <span
+                    className="legend-dot"
+                    style={{
+                      backgroundColor:
+                        STATUS_COLORS[item.label].bg || "#3b82f6"
+                    }}
+                  />
+                  <span className="legend-label">
+                    {item.label} ({item.quantidade})
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
           <div className="chart-card">
             <h3>Quantidade de Reservas – Últimos 6 Meses</h3>
             <div className="chart-graph">
-              <ResponsiveContainer width="100%" height={120}>
+              <ResponsiveContainer width="100%" height={260}>
                 <BarChart
                   data={dadosMeses}
-                  margin={{ top: 10, right: 10, left: 10, bottom: 2 }}
+                  margin={{ top: 10, right: 2, left: 2, bottom: 10 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis
                     dataKey="label"
                     tick={{ fontSize: 9 }}
-                    height={20}
+                    angle={-40}
+                    textAnchor="end"
+                    height={50}
                     width={60}
                   />
-                  <YAxis tick={{ fontSize: 10 }} />
+                  <YAxis tick={{ fontSize: 9 }} />
                   <Tooltip
-                    formatter={(value) => value}
+                    formatter={(value) => formatCurrency(value)}
                   />
-                  <Bar dataKey="quantidade" radius={[8, 8, 0, 0]} fill="#22c55e" />
+                  <Bar dataKey="quantidade" radius={[8, 8, 8, 8]} fill="#22c55e" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
