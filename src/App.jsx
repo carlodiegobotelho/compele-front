@@ -8,6 +8,7 @@ import MinhasPendencias from './pages/MinhasPendencias'
 import DetalheReserva from './pages/DetalheReserva'
 import Sidebar from './components/Sidebar'
 import InclusaoArquivo from './pages/InclusaoArquivos.jsx'
+import InclusaoCredito from './pages/InclusaoCredito.jsx'
 
 export default function App() {
   const navigate = useNavigate()
@@ -33,6 +34,7 @@ export default function App() {
           <Route path="/minhas-solicitacoes" element={<MinhasSolicitacoes />} />
           <Route path="/inclusao-arquivo" element={<InclusaoArquivo />} />
           <Route path="/reserva/:id" element={<DetalheReserva />} />
+          <Route path="/extrato-creditos" element={<InclusaoCredito />} />
           <Route path="*" element={<Navigate to="/login" />} />
         </Routes>
       </div>

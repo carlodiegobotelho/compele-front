@@ -535,7 +535,7 @@ export default function DashboardReservas() {
                   />
                   <YAxis tick={{ fontSize: 9 }} />
                   <Tooltip
-                    formatter={(value) => formatCurrency(value)}
+                    formatter={(value) => value}
                   />
                   <Bar dataKey="quantidade" radius={[8, 8, 8, 8]} fill="#22c55e" />
                 </BarChart>

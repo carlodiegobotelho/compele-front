@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import {
-  FaHome,
+  FaChartPie,
   FaPlus,
   FaTasks,
   FaSignOutAlt,
@@ -10,6 +10,7 @@ import {
   FaUserCircle,
   FaCalendarCheck,
   FaFilePdf,
+  FaMoneyBill,
 } from 'react-icons/fa'
 import '../styles/SideBar.css'
 
@@ -33,14 +34,15 @@ export default function Sidebar() {
     navigate('/login')
   }
 
-  const isAprovador = usuario?.perfil === "Aprovador";
+  const isAprovador = usuario?.perfil === "Aprovador" || usuario?.perfil === "Admin";
 
   const menuItems = [
-    { name: 'Principal', icon: <FaHome />, path: '/principal', showMenu: true },
+    { name: 'Dashboard', icon: <FaChartPie />, path: '/principal', showMenu: true },
     { name: 'Solicitar Reserva', icon: <FaPlus />, path: '/solicitar-reserva', showMenu: true },
     { name: 'Minhas Pendências', icon: <FaTasks />, path: '/minhas-pendencias', showMenu: isAprovador },
     { name: 'Relatório de Reservas', icon: <FaCalendarCheck />, path: '/minhas-solicitacoes', showMenu: true },
     { name: 'Notas', icon: <FaFilePdf />, path: '/inclusao-arquivo', showMenu: true },
+    { name: 'Extrato Créditos', icon: <FaMoneyBill /> , path: '/extrato-creditos', showMenu: isAprovador}
   ]
 
   return (

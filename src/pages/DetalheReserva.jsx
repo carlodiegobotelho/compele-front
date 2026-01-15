@@ -173,10 +173,10 @@ export default function DetalheReserva() {
   if (!reserva) return <p>Reserva não encontrada.</p>;
 
   const isAprovavel =
-    reserva.perfilUsuario === "aprovador" && reserva.statusId === 1;
+    (reserva.perfilUsuario === "aprovador" || reserva.perfilUsuario === "admin") && reserva.statusId === 1;
 
   const exibeInclusaoRecibo =
-    reserva.perfilUsuario === "aprovador";
+    reserva.perfilUsuario === "aprovador" || reserva.perfilUsuario === "admin";
 
   return (
     <div className="page-wrapper">
