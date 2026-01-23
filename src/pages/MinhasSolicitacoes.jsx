@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import api from "../services/api";
-import { FaInfoCircle, FaSearch, FaEye, FaFileExcel } from "react-icons/fa";
+import { FaInfoCircle, FaSearch, FaEye, FaFileExcel, FaUser } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom'
 import PageHeader from "../components/PageHeader";
 import "../styles/MinhasSolicitacoes.css";
@@ -268,9 +268,10 @@ export default function MinhasSolicitacoes() {
               <tr>
                 {[
                 { key: "usuarioSolicitanteNome", label: "Colaborador" },
+                { key: "quantidadePessoas", label: <FaUser /> },
                 { key: "dataCriacao", label: "Criação" },
-                { key: "dataInicio", label: "Início" },
-                { key: "dataFim", label: "Fim" },
+                { key: "dataInicio", label: "Entrada" },
+                { key: "dataFim", label: "Saída" },
                 { key: "cidade", label: "Cidade" },
                 { key: "valorImovel", label: "Valor Imovel" },
                 { key: "valorComTaxa", label: "Valor Total" },
@@ -292,6 +293,7 @@ export default function MinhasSolicitacoes() {
               {sortedSolicitacoes.map((s) => (
                 <tr key={s.id}>
                   <td>{s.usuarioColaboradorNome || "-"}</td>
+                  <td>{s.quantidadePessoas}</td>
                     <td>
                     {new Date(s.dataCriacao).toLocaleString("pt-BR", {
                         day: "2-digit",

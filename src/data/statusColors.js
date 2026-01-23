@@ -7,18 +7,34 @@ export const STATUS_COLORS = {
     bg: "#22C55E",
     text: "#ffffff",
   },
+  "Aprovado": {
+    bg: "#22C55E",
+    text: "#ffffff",
+  }, 
   "Reprovada": {
     bg: "#EF4444",
     text: "#ffffff",
   },
+  "Reprovado": {
+    bg: "#EF4444",
+    text: "#ffffff",
+  },  
   "Cancelada": {
     bg: "#DC2626",
     text: "#ffffff",
   },
+  "Cancelado": {
+    bg: "#DC2626",
+    text: "#ffffff",
+  },  
   "Concluída": {
     bg: "#12b17cff",
     text: "#ffffff",
   },
+  "Concluído": {
+    bg: "#12b17cff",
+    text: "#ffffff",
+  },  
   "Concluída Parcelada": {
     bg: "#3B82F6",
     text: "#fffffff"

@@ -2,104 +2,35 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { toast, ToastContainer } from "react-toastify";
-import { FaCheckCircle } from "react-icons/fa";
+import { FaCheckCircle, FaExternalLinkAlt, FaCommentDots, FaSpinner, FaTrash, FaPlus } from "react-icons/fa";
 import "react-toastify/dist/ReactToastify.css";
 import PageHeader from "../components/PageHeader";
 import "../styles/SolicitarReserva.css";
 import cidades from "../data/cidades";
-import { FaExternalLinkAlt, FaCommentDots, FaSpinner } from "react-icons/fa";
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function SolicitarReserva() {
   const hoje = new Date().toISOString().split("T")[0];
   const [loading, setLoading] = useState(false);
+
+  // ✅ lista dinâmica de colaboradores
+  const [colaboradores, setColaboradores] = useState([
+    { nomeColaborador: "", emailColaborador: "" },
+  ]);
+
   const [form, setForm] = useState({
-      dataInicio: hoje,
-      dataFim: hoje,
-      cidade: "",
-      nomeColaborador: "",
-      emailColaborador: "",
-      nomeAnfitriao: "",
-      telefoneAnfitriao: "",
-      linkImovel: "",
-      valorImovel: "",
-      centroDeCusto: "",
-      quantidadePessoas: 1,
-      motivo: "",
-      observacao: "",
+    dataInicio: hoje,
+    dataFim: hoje,
+    cidade: "",
+    nomeAnfitriao: "",
+    telefoneAnfitriao: "",
+    linkImovel: "",
+    valorImovel: "",
+    centroDeCusto: "",
+    motivo: "",
+    observacao: "",
   });
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
-  };
-
-  const handleMoneyChange = (e) => {
-    const { name, value } = e.target;
-    const num = value.replace(/\D/g, "");
-    const formatted = (Number(num) / 100).toLocaleString("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    });
-    setForm({ ...form, [name]: formatted });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    setLoading(true);
-
-    try {
-      const toDecimal = (v) =>
-        Number(v.replace(/[R$\s.]/g, "").replace(",", ".")) || 0;
-
-      const payload = {
-        dataInicio: form.dataInicio,
-        dataFim: form.dataFim,
-        cidade: form.cidade,
-        nomeColaborador: form.nomeColaborador,
-        emailColaborador: form.emailColaborador,
-        nomeAnfitriao: form.nomeAnfitriao,
-        telefoneAnfitriao: form.telefoneAnfitriao,
-        linkImovel: form.linkImovel,
-        valorImovel: toDecimal(form.valorImovel),
-        centroDeCusto: form.centroDeCusto,
-        quantidadePessoas: Number(form.quantidadePessoas),
-        motivo: form.motivo,
-        observacao: form.observacao,
-      };
-
-      console.log(payload);
-
-      await api.post("/api/reservas", payload);
-
-      setShowModal(true);
-      setTimer(10);
-
-      setForm({
-        dataInicio: hoje,
-        dataFim: "",
-        cidade: "",
-        nomeColaborador: "",
-        emailColaborador: "",
-        nomeAnfitriao: "",
-        telefoneAnfitriao: "",
-        linkImovel: "",
-        valorImovel: "",
-        centroDeCusto: "",
-        quantidadePessoas: 1,
-        motivo: "",
-        observacao: "",
-      });
-    } catch (err) {
-      console.error(err);
-      toast.error(
-        err?.response?.data?.erros?.[0] ||
-          "Erro ao enviar solicitação. Verifique os campos digitados e tente novamente."
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const cidadesOptions = React.useMemo(() => {
     const unique = Array.from(new Set(cidades));
@@ -118,39 +49,210 @@ export default function SolicitarReserva() {
       navigate("/minhas-solicitacoes");
     }
     return () => clearInterval(countdown);
-  }, [showModal, timer]);
+  }, [showModal, timer, navigate]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleMoneyChange = (e) => {
+    const { name, value } = e.target;
+    const num = value.replace(/\D/g, "");
+    const formatted = (Number(num) / 100).toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    });
+    setForm((prev) => ({ ...prev, [name]: formatted }));
+  };
+
+  // ✅ colaboradores handlers
+  const handleColaboradorChange = (index, field, value) => {
+    setColaboradores((prev) => {
+      const next = [...prev];
+      next[index] = { ...next[index], [field]: value };
+      return next;
+    });
+  };
+
+  const handleAddColaborador = () => {
+    setColaboradores((prev) => [
+      ...prev,
+      { nomeColaborador: "", emailColaborador: "" },
+    ]);
+  };
+
+  const handleRemoveColaborador = (index) => {
+    // ✅ não remove a última linha
+    setColaboradores((prev) => {
+      if (prev.length <= 1) return prev;
+      const next = prev.filter((_, i) => i !== index);
+      return next.length ? next : prev;
+    });
+  };
+
+  const validarColaboradores = () => {
+    if (!colaboradores || colaboradores.length === 0) {
+      toast.error("Inclua pelo menos 1 colaborador.");
+      return false;
+    }
+
+    for (let i = 0; i < colaboradores.length; i++) {
+      const nome = (colaboradores[i].nomeColaborador || "").trim();
+      const email = (colaboradores[i].emailColaborador || "").trim();
+
+      if (!nome) {
+        toast.error(`Informe o nome do colaborador (linha ${i + 1}).`);
+        return false;
+      }
+      if (!email || !EMAIL_REGEX.test(email)) {
+        toast.error(`Informe um e-mail válido (linha ${i + 1}).`);
+        return false;
+      }
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!validarColaboradores()) return;
+
+    setLoading(true);
+
+    try {
+      const toDecimal = (v) =>
+        Number((v || "").replace(/[R$\s.]/g, "").replace(",", ".")) || 0;
+
+      const primeiro = colaboradores[0];
+
+      const payload = {
+        dataInicio: form.dataInicio,
+        dataFim: form.dataFim,
+        cidade: form.cidade,
+
+        // ✅ raiz recebe o primeiro colaborador
+        nomeColaborador: (primeiro.nomeColaborador || "").trim(),
+        emailColaborador: (primeiro.emailColaborador || "").trim(),
+
+        nomeAnfitriao: form.nomeAnfitriao,
+        telefoneAnfitriao: form.telefoneAnfitriao,
+        linkImovel: form.linkImovel,
+        valorImovel: toDecimal(form.valorImovel),
+        centroDeCusto: form.centroDeCusto,
+
+        // ✅ quantidade automática
+        quantidadePessoas: colaboradores.length,
+
+        motivo: form.motivo,
+        observacao: form.observacao,
+
+        // ✅ novo campo
+        colaboradores: colaboradores.map((c) => ({
+          nomeColaborador: (c.nomeColaborador || "").trim(),
+          emailColaborador: (c.emailColaborador || "").trim(),
+        })),
+      };
+
+      await api.post("/api/reservas", payload);
+
+      setShowModal(true);
+      setTimer(10);
+
+      // reset
+      setColaboradores([{ nomeColaborador: "", emailColaborador: "" }]);
+      setForm({
+        dataInicio: hoje,
+        dataFim: "",
+        cidade: "",
+        nomeAnfitriao: "",
+        telefoneAnfitriao: "",
+        linkImovel: "",
+        valorImovel: "",
+        centroDeCusto: "",
+        motivo: "",
+        observacao: "",
+      });
+    } catch (err) {
+      console.error(err);
+      toast.error(
+        err?.response?.data?.erros?.[0] ||
+          "Erro ao enviar solicitação. Verifique os campos digitados e tente novamente."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const quantidadePessoas = colaboradores.length;
 
   return (
     <div className="page-wrapper">
       <PageHeader title="Solicitar Reserva" />
 
       <form className="form-reserva" onSubmit={handleSubmit}>
+        {/* ✅ COLABORADORES (dinâmico) */}
+        {colaboradores.map((c, idx) => {
+          const podeRemover = colaboradores.length > 1;
+          return (
+            <div className="form-row" key={idx}>
+              <div className="form-group colaboradores">
+                <label>{"Nome do Colaborador " + (idx + 1) + " *"}</label>
+                <input
+                  type="text"
+                  value={c.nomeColaborador}
+                  onChange={(e) =>
+                    handleColaboradorChange(idx, "nomeColaborador", e.target.value)
+                  }
+                  required
+                  placeholder="Digite o nome do colaborador"
+                />
+              </div>
+
+              <div className="form-group colaboradores">
+                <label>{"Email do Colaborador " + (idx + 1) + " *"}</label>
+                <input
+                  type="email"
+                  value={c.emailColaborador}
+                  onChange={(e) =>
+                    handleColaboradorChange(idx, "emailColaborador", e.target.value)
+                  }
+                  required
+                  placeholder="colaborador@dominio.com"
+                />
+              </div>
+
+              <div className="form-group form-group-icon">
+                <label className="sr-only">Remover</label>
+                <button
+                  type="button"
+                  className={`btn-remove-colaborador ${!podeRemover ? "disabled" : ""}`}
+                  onClick={() => handleRemoveColaborador(idx)}
+                  disabled={!podeRemover}
+                  title={!podeRemover ? "Não é possível remover o último colaborador" : "Remover colaborador"}
+                >
+                  <FaTrash />
+                </button>
+              </div>
+            </div>
+          );
+        })}
+
         <div className="form-row">
           <div className="form-group">
-            <label>Nome do Colaborador *</label>
-            <input
-              type="text"
-              name="nomeColaborador"
-              value={form.nomeColaborador}
-              onChange={handleChange}
-              required
-              placeholder="Digite o nome do colaborador"
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Email do Colaborador *</label>
-            <input
-              type="email"
-              name="emailColaborador"
-              value={form.emailColaborador}
-              onChange={handleChange}
-              required
-              placeholder="colaborador@dominio.com"
-            />
+            <button
+              type="button"
+              className="btn-add-colaborador"
+              onClick={handleAddColaborador}
+              disabled={loading}
+            >
+              <FaPlus /> Incluir Colaborador
+            </button>
           </div>
         </div>
 
+        {/* datas */}
         <div className="form-row">
           <div className="form-group">
             <label>Data Início *</label>
@@ -177,6 +279,7 @@ export default function SolicitarReserva() {
           </div>
         </div>
 
+        {/* cidade + qtd */}
         <div className="form-row">
           <div className="form-group">
             <label>Cidade *</label>
@@ -202,14 +305,16 @@ export default function SolicitarReserva() {
             <input
               type="number"
               name="quantidadePessoas"
-              value={form.quantidadePessoas}
-              onChange={handleChange}
+              value={quantidadePessoas}
+              disabled
+              readOnly
               min="1"
-              required
+              title="Preenchido automaticamente pela quantidade de colaboradores"
             />
           </div>
         </div>
 
+        {/* valor + cc */}
         <div className="form-row">
           <div className="form-group">
             <label>Valor do Imóvel*</label>
@@ -236,6 +341,7 @@ export default function SolicitarReserva() {
           </div>
         </div>
 
+        {/* anfitrião */}
         <div className="form-row">
           <div className="form-group">
             <label>Nome do Anfitrião</label>
@@ -260,6 +366,7 @@ export default function SolicitarReserva() {
           </div>
         </div>
 
+        {/* link + motivo */}
         <div className="form-row">
           <div className="form-group">
             <label>Link do Imóvel *</label>
@@ -305,6 +412,7 @@ export default function SolicitarReserva() {
           </div>
         </div>
 
+        {/* observação */}
         <div className="form-row">
           <div className="form-group">
             <label>Observação</label>
@@ -317,7 +425,7 @@ export default function SolicitarReserva() {
             />
           </div>
         </div>
-        
+
         <button type="submit" className="btn-enviar" disabled={loading}>
           {loading ? (
             <>
@@ -334,13 +442,20 @@ export default function SolicitarReserva() {
           <div className="modal-content">
             <FaCheckCircle className="success-icon" />
             <h3>Reserva solicitada com sucesso!</h3>
-            <button className="btn-ver-solicitacoes" onClick={() => navigate("/minhas-solicitacoes")}>
+            <button
+              className="btn-ver-solicitacoes"
+              onClick={() => navigate("/minhas-solicitacoes")}
+            >
               Ver minhas solicitações ({timer})
-              <div className="timer-bar" style={{ width: `${(10 - timer) * 10}%` }}></div>
+              <div
+                className="timer-bar"
+                style={{ width: `${(10 - timer) * 10}%` }}
+              ></div>
             </button>
           </div>
         </div>
       )}
+
       <ToastContainer position="top-right" />
     </div>
   );
