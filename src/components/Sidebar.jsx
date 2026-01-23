@@ -35,6 +35,7 @@ export default function Sidebar() {
   }
 
   const isAprovador = usuario?.perfil === "Aprovador" || usuario?.perfil === "Admin";
+  const isSolicitante = usuario?.perfil === "Solicitante";
 
   const menuItems = [
     { name: 'Dashboard', icon: <FaChartPie />, path: '/principal', showMenu: true },
@@ -42,7 +43,7 @@ export default function Sidebar() {
     { name: 'Minhas Pendências', icon: <FaTasks />, path: '/minhas-pendencias', showMenu: isAprovador },
     { name: 'Relatório de Reservas', icon: <FaCalendarCheck />, path: '/minhas-solicitacoes', showMenu: true },
     { name: 'Notas', icon: <FaFilePdf />, path: '/inclusao-arquivo', showMenu: true },
-    { name: 'Extrato Créditos', icon: <FaMoneyBill /> , path: '/extrato-creditos', showMenu: isAprovador}
+    { name: 'Extrato Créditos', icon: <FaMoneyBill /> , path: '/extrato-creditos', showMenu: (isAprovador || isSolicitante)}
   ]
 
   return (

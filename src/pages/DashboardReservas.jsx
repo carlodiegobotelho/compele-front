@@ -389,7 +389,7 @@ export default function DashboardReservas() {
           </div>
 
           <div className="chart-card">
-            <h3>Top 5 Cidades por Gastos</h3>
+            <h3>Top 5 Cidades (Gastos)</h3>
             <div className="chart-graph">
               <ResponsiveContainer width="100%" height={260}>
                 <BarChart
