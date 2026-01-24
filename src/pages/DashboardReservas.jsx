@@ -261,27 +261,49 @@ export default function DashboardReservas() {
 
       {resumo && (
         <div className="cards-container">
-          <div className="card kpi">
+          <div className="card kpi kpi-tooltip">
             <FaClipboardList />
             <div className="card-content">
               <strong>{resumo.quantidadeRecibos ?? 0}</strong>
               <span>Quantidade de Recibos</span>
             </div>
+            <div className="kpi-tooltip-box">
+              <div className="kpi-tooltip-title">Título</div>
+
+              <div className="kpi-tooltip-list">
+                Texto Descritivo
+              </div>
+            </div>    
           </div>
 
-          <div className="card kpi">
+          <div className="card kpi kpi-tooltip">
             <FaMoneyBillWave />
             <div className="card-content">
               <strong>{formatCurrency(resumo.valorTotal ?? 0)}</strong>
               <span>Valor Total</span>
             </div>
+            <div className="kpi-tooltip-box">
+              <div className="kpi-tooltip-title">Título</div>
+
+              <div className="kpi-tooltip-list">
+                Texto Descritivo
+              </div>
+            </div>            
           </div>
 
-          <div className="card kpi">
+          <div className="card kpi kpi-tooltip">
             <FaCalendarDay />
             <div className="card-content">
               <strong>{formatCurrency(resumo.valorMedioPorDiaria ?? 0)}</strong>
               <span>Valor Médio / Diária / Pessoa</span>
+            </div>
+
+            <div className="kpi-tooltip-box">
+              <div className="kpi-tooltip-title">Título</div>
+
+              <div className="kpi-tooltip-list">
+                Texto Descritivo
+              </div>
             </div>
           </div>
 
