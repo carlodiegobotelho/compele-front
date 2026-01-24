@@ -52,7 +52,6 @@ export default function DetalheReserva() {
       setReserva(response.data);
     } catch (err) {
       toast.error("Erro ao carregar reserva.");
-      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -64,119 +63,33 @@ export default function DetalheReserva() {
       setRecibos(response.data);
     } catch (err) {
       toast.error("Erro ao carregar recibos.");
-      console.error(err);
-    }
-  };
-
-  const handleConfirmar = async () => {
-    if (!reserva) return;
-
-    if (decisaoAprovar == false && !observacao)
-    {
-      toast.error("Digite uma justificativa para a reprovação da reserva.");
-      return;
-    }
-
-    setBusy(true);
-    setShowModal(false);
-    try {
-      await api.post(`/api/reservas/${reserva.id}/decisao`, {
-        aprovar: decisaoAprovar,
-        observacao,
-      });
-      await carregarReserva();
-      toast.success("Decisão registrada com sucesso!");
-    } catch (err) {
-      toast.error("Erro ao enviar decisão.");
-      console.error(err);
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  const handleUploadRecibos = async () => {
-    try {
-      setUploading(true);
-      for (const file of arquivosSelecionados) {
-        const formData = new FormData();
-        formData.append("arquivo", file);
-        await api.post(`/api/reservas/${reserva.id}/recibos`, formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
-      }
-      toast.success("Recibo(s) enviados com sucesso!");
-      setShowModalInclusaoRecibo(false);
-      setArquivosSelecionados([]);
-      await carregarRecibos();
-    } catch (error) {
-      toast.error("Erro ao enviar recibos.");
-      console.error(error);
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  const handleDownload = async (reciboId, nome) => {
-    try {
-      setLoadingDownloadId(reciboId);
-      const response = await api.get(`/api/arquivos/download/${reciboId}`, {
-        responseType: "blob",
-      });
-      const blob = new Blob([response.data], { type: "application/pdf" });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = nome;
-      a.click();
-      window.URL.revokeObjectURL(url);
-    } catch (err) {
-      toast.error("Erro ao fazer download do recibo.");
-      console.error(err);
-    } finally {
-      setLoadingDownloadId(null);
-    }
-  };
-
-  const handleVisualizar = async (reciboId) => {
-    try {
-      setLoadingViewId(reciboId);
-      const response = await api.get(`/api/arquivos/download/${reciboId}`, {
-        responseType: "blob",
-      });
-      const blob = new Blob([response.data], { type: "application/pdf" });
-      const url = window.URL.createObjectURL(blob);
-      window.open(url, "_blank");
-    } catch (err) {
-      toast.error("Erro ao visualizar recibo.");
-      console.error(err);
-    } finally {
-      setLoadingViewId(null);
-    }
-  };
-
-  const handleDeleteRecibo = async (reciboId, nome) => {
-    try {
-      setDeletingId(reciboId);
-      await api.delete(`/api/arquivos/${reciboId}`);
-      toast.success(`Recibo ${nome} excluído com sucesso!`);
-      await carregarRecibos();
-    } catch (err) {
-      toast.error("Erro ao excluir recibo.");
-      console.error(err);
-    } finally {
-      setDeletingId(null);
-      setShowConfirmDelete(null);
     }
   };
 
   if (loading) return <p>Carregando reserva...</p>;
   if (!reserva) return <p>Reserva não encontrada.</p>;
 
+  /* ===== FALLBACK DE COLABORADORES ===== */
+  const colaboradoresTopo =
+    Array.isArray(reserva.colaboradores) && reserva.colaboradores.length > 0
+      ? reserva.colaboradores
+      : reserva.usuarioColaboradorNome
+      ? [
+          {
+            nomeColaborador: reserva.usuarioColaboradorNome,
+            emailColaborador: reserva.usuarioColaboradorEmail,
+          },
+        ]
+      : [];
+
   const isAprovavel =
-    (reserva.perfilUsuario === "aprovador" || reserva.perfilUsuario === "admin") && reserva.statusId === 1;
+    (reserva.perfilUsuario === "aprovador" ||
+      reserva.perfilUsuario === "admin") &&
+    reserva.statusId === 1;
 
   const exibeInclusaoRecibo =
-    reserva.perfilUsuario === "aprovador" || reserva.perfilUsuario === "admin";
+    reserva.perfilUsuario === "aprovador" ||
+    reserva.perfilUsuario === "admin";
 
   return (
     <div className="page-wrapper">
@@ -191,44 +104,92 @@ export default function DetalheReserva() {
                 <FaArrowLeft /> Voltar
               </button>
             )}
-            <div className="header-info">
-              <h2 className="solicitante-nome">
-                Colaborador: {reserva.usuarioColaboradorNome}
-              </h2>
-              {reserva.usuarioColaboradorEmail && (
-                <div className="email-badge-row">
-                  <small className="email-badge">{reserva.usuarioColaboradorEmail}
 
-                    <button
-                      type="button"
-                      className="btn-copy-email"
-                      title="Copiar e-mail"
-                      onClick={async () => {
-                        await navigator.clipboard.writeText(reserva.usuarioColaboradorEmail);
-                        toast.success("E-mail copiado!");
-                      }}
-                    >
-                      <FaCopy />
-                    </button>
-                  </small>
-                </div>
-              )}
+            <div className="header-info">
+              {/* ===== COLABORADORES ===== */}
+              <div className="colaboradores-topo">
+                {colaboradoresTopo.length === 1 ? (
+                  <div className="colab-linha-unica">
+                    <h2 className="solicitante-nome">
+                      Colaborador: {colaboradoresTopo[0].nomeColaborador}
+                    </h2>
+
+                    {colaboradoresTopo[0].emailColaborador && (
+                      <small className="email-badge">
+                        {colaboradoresTopo[0].emailColaborador}
+                        <button
+                          type="button"
+                          className="btn-copy-email"
+                          title="Copiar e-mail"
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            await navigator.clipboard.writeText(
+                              colaboradoresTopo[0].emailColaborador
+                            );
+                            toast.success("E-mail copiado!");
+                          }}
+                        >
+                          <FaCopy />
+                        </button>
+                      </small>
+                    )}
+                  </div>
+                ) : (
+                  <div className="colab-linha-unica">
+                    {colaboradoresTopo.map((c, idx) => {
+                      const numero = String(idx + 1).padStart(2, "0");
+                      return (
+                        <div
+                          key={`${c.emailColaborador}-${idx}`}
+                          className="colab-linha-unica"
+                        >
+                          <h2 className="solicitante-nome">
+                            {`Colaborador ${numero}: ${c.nomeColaborador}`}
+                          </h2>
+
+                          {c.emailColaborador && (
+                            <small className="email-badge">
+                              {c.emailColaborador}
+                              <button
+                                type="button"
+                                className="btn-copy-email"
+                                title="Copiar e-mail"
+                                onClick={async (e) => {
+                                  e.stopPropagation();
+                                  await navigator.clipboard.writeText(
+                                    c.emailColaborador
+                                  );
+                                  toast.success("E-mail copiado!");
+                                }}
+                              >
+                                <FaCopy />
+                              </button>
+                            </small>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
               <p className="cidade">Cidade: {reserva.cidade}</p>
             </div>
           </div>
 
           <span
-            className={`status-badge`} 
+            className="status-badge"
             style={{
-              backgroundColor: STATUS_COLORS[reserva.status]?.bg || "#3b82f6",
-              color: STATUS_COLORS[reserva.status]?.text || "#ffffff"
+              backgroundColor:
+                STATUS_COLORS[reserva.status]?.bg || "#3b82f6",
+              color: STATUS_COLORS[reserva.status]?.text || "#ffffff",
             }}
           >
             {reserva.status}
           </span>
         </div>
 
-        {/* ===== INFORMAÇÕES ===== */}
+    {/* ===== INFORMAÇÕES ===== */}
         <div className="grid-info">
           <div>
             <strong>Solicitante:</strong>{reserva.usuarioSolicitanteNome}

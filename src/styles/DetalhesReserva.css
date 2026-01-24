@@ -39,7 +39,7 @@
 .cidade {
   font-size: 1.15rem;
   color: #4b5563;
-  margin-top: 6px;
+  margin-top: 15px;
   font-weight: 500;
 }
 
@@ -460,4 +460,79 @@
 
 .btn-copy-email:active {
   transform: translateY(0);
+}
+
+/* ===== COLABORADORES (TOPO) ===== */
+.colaboradores-topo {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* caso de 1 colaborador: nome e email na mesma linha */
+.colab-linha-unica {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* diminui um pouco o "peso" visual do h2 nesse modo */
+.colab-linha-unica .solicitante-nome {
+  font-size: 1.35rem; /* antes 1.6rem */
+  margin: 0;
+}
+
+/* lista quando tiver mais de 1 colaborador */
+.colab-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 2px;
+}
+
+.colab-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.colab-left {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.colab-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.colab-nome {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #171c2e;
+}
+
+/* reaproveita seu badge, só ajusta para encaixar bem no topo */
+.colab-item .email-badge,
+.colab-linha-unica .email-badge {
+  margin-top: 0;
+  white-space: nowrap;
+}
+
+/* responsivo: deixa o email quebrar embaixo quando apertar */
+@media (max-width: 640px) {
+  .colab-item {
+    align-items: flex-start;
+  }
 }
